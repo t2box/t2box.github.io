@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video to MP3 – Toolbox</title>
+<meta name="description" content="Extract audio from MP4, WebM, MOV and other videos as MP3 or WAV. Free, runs in your browser, files are never uploaded.">
+<style>
+:root{--bg:#fbf6ee;--card:#fff;--ink:#241c12;--mute:#6f6455;--line:#e4d9c6;--acc:#d9480f;--acc2:#fdeadb}
+@media (prefers-color-scheme:dark){:root{--bg:#1a150f;--card:#251e15;--ink:#f4ebdc;--mute:#a99c86;--line:#3b3224;--acc:#ff8a4c;--acc2:#32241a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+main{max-width:720px;margin:0 auto;padding:30px 16px 60px}
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15;margin:0 0 8px}
+.sub{color:var(--mute);margin:0 0 22px}
+.drop{border:2px dashed var(--acc);background:var(--acc2);border-radius:14px;padding:38px 16px;text-align:center;cursor:pointer}
+.drop.over{background:var(--card)}
+.drop b{font-size:1.1rem}
+.drop small{display:block;color:var(--mute);margin-top:4px}
+.link{display:flex;gap:8px;margin-top:12px}
+.link input{flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+.link .btn{padding:10px 18px}
+.file{margin-top:12px;color:var(--mute);overflow-wrap:anywhere}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+label{display:block;font-size:.85rem;color:var(--mute)}
+select,input[type=number]{width:100%;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 24px;font:inherit;font-weight:700;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#2a1204}}
+.btn:disabled{opacity:.5;cursor:default}
+.bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
+.bar i{display:block;height:100%;width:0;background:var(--acc)}
+.msg{margin-top:10px;color:var(--mute);font-size:.9rem}
+.msg.err{color:#c0392b}
+.out{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.out b{display:block;overflow-wrap:anywhere}
+.out small{color:var(--mute)}
+audio{width:100%;margin-top:8px}
+a.dl{display:inline-block;margin-top:8px;color:var(--acc);font-weight:700;text-decoration:none}
+h2{font-size:1.1rem;margin:34px 0 6px}
+p,li{color:var(--mute)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='45' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="sh-in"><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><nav class="sh-nav" aria-label="Main"><a href="../index.html#tools">Tools</a><a href="../index.html#about">About</a><a href="../privacy.html">Privacy</a></nav></div></header>
+
+<main>
+<h1>Video to MP3</h1>
+<p class="sub">Extract the audio from a video and save it as MP3 or WAV. Everything happens in your browser, so your video is never uploaded.</p>
+
+<div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose a video file">
+  <b>Drop a video here or tap to choose</b>
+  <small>MP4, WebM, MOV, MKV and more (what your browser can play)</small>
+  <input type="file" id="file" accept="video/*,audio/*" hidden>
+</div>
+<form class="link" id="lf">
+  <input type="url" id="url" placeholder="Or paste a direct video link (https://…/video.mp4)" aria-label="Direct video link">
+  <button class="btn" id="lb" type="submit">Load link</button>
+</form>
+<div class="file" id="fname"></div>
+
+<div class="opts">
+  <label>Format
+    <select id="fmt"><option value="mp3">MP3</option><option value="wav">WAV</option></select>
+  </label>
+  <label>MP3 bitrate (kbps)
+    <select id="kbps"><option>96</option><option>128</option><option selected>192</option><option>256</option><option>320</option></select>
+  </label>
+  <label>Channels
+    <select id="ch"><option value="0">Original</option><option value="1">Mono</option></select>
+  </label>
+  <label>Start (seconds)<input type="number" id="t0" min="0" step="0.1" placeholder="0"></label>
+  <label>End (seconds)<input type="number" id="t1" min="0" step="0.1" placeholder="Full length"></label>
+</div>
+
+<button class="btn" id="go" disabled>Extract audio</button>
+<div class="bar" id="bar"><i></i></div>
+<div class="msg" id="msg" aria-live="polite"></div>
+<div id="results"></div>
+
+<h2>Tips</h2>
+<ul>
+  <li>Link loading only works for direct file links (ending in .mp4, .webm and similar) from sites that allow it. Page links from YouTube, TikTok, Instagram and similar sites are not supported. Download the file yourself and upload it instead.</li>
+  <li>Large videos use a lot of memory. If the page struggles, trim the video first or try a smaller file.</li>
+  <li>If your browser cannot play the video format, it cannot extract its audio either. Chrome and Edge handle the most formats.</li>
+  <li>Use videos you own or have permission to use.</li>
+</ul>
+</main>
+<div class="site-footer"><div class="sf-in">
+<div><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><div class="sf-b">Free online tools for audio, video and images. Everything runs in your browser.</div></div>
+<div><div class="sf-h">Tools</div><a class="sf-l" href="mp3-convert.html">MP3 Convert</a><a class="sf-l" href="resize-image-3000x3000.html">Resize Image to 3000x3000</a><a class="sf-l" href="vocal-remover.html">Vocal Remover</a><a class="sf-l" href="video-to-mp3.html">Video to MP3</a><a class="sf-l" href="image-size-dpi.html">Image Size, DPI and File Size</a></div>
+<div><div class="sf-h">Toolbox</div><a class="sf-l" href="../index.html#about">About</a><a class="sf-l" href="../privacy.html">Privacy Policy</a><a class="sf-l" href="../terms.html">Terms of Use</a></div>
+</div><div class="sf-copy">&copy; 2026 Toolbox. All rights reserved.</div></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let file=null;
+const drop=$('drop'),inp=$('file');
+drop.onclick=()=>inp.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click()}};
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>pick(e.dataTransfer.files[0]));
+inp.onchange=()=>{pick(inp.files[0]);inp.value=''};
+$('fmt').onchange=()=>$('kbps').disabled=$('fmt').value==='wav';
+
+function say(t,err){const m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
+function prog(p){$('bar').style.display='block';$('bar').firstElementChild.style.width=p+'%'}
+const tick=()=>new Promise(r=>setTimeout(r));
+const size=b=>b>1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(0)+' KB';
+
+$('lf').onsubmit=async e=>{
+  e.preventDefault();
+  const u=$('url').value.trim();if(!u)return;
+  let url;try{url=new URL(u)}catch(_){return say('That does not look like a valid link.',1)}
+  if(/(youtube\.com|youtu\.be|tiktok\.com|instagram\.com|facebook\.com|fb\.watch|twitter\.com|x\.com|vimeo\.com)$/i.test(url.hostname.replace(/^www\./,'')))
+    return say('Page links from video sites are not supported. Use a direct link to a video file, or upload the file.',1);
+  $('lb').disabled=true;say('Downloading the file…');prog(10);
+  try{
+    const r=await fetch(url.href);
+    if(!r.ok)throw new Error('The server returned an error ('+r.status+').');
+    const b=await r.blob();
+    const nm=decodeURIComponent(url.pathname.split('/').pop())||'video';
+    pick(new File([b],nm,{type:b.type||'video/mp4'}));
+    say('Link loaded. Now click Extract audio.');
+  }catch(err){
+    say(err instanceof TypeError?'This site does not allow loading its files from another page, or the link is not a direct file. Download the video and upload it here instead.':err.message,1);
+  }finally{$('lb').disabled=false;$('bar').style.display='none'}
+};
+function pick(f){
+  if(!f)return;
+  if(!/^(video|audio)\//.test(f.type)&&!/\.(mp4|webm|mov|mkv|m4v|avi|ogv|3gp)$/i.test(f.name))return say('Please choose a video file.',1);
+  file=f;$('fname').textContent=f.name+' ('+size(f.size)+')';$('go').disabled=false;say('');
+}
+const i16=a=>{const r=new Int16Array(a.length);for(let i=0;i<a.length;i++){const s=Math.max(-1,Math.min(1,a[i]));r[i]=s<0?s*32768:s*32767}return r};
+
+function wav(chs,sr){
+  const n=chs[0].length,c=chs.length,d=new DataView(new ArrayBuffer(44+n*c*2));
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');d.setUint32(4,36+n*c*2,true);w(8,'WAVEfmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);
+  d.setUint16(22,c,true);d.setUint32(24,sr,true);d.setUint32(28,sr*c*2,true);d.setUint16(32,c*2,true);d.setUint16(34,16,true);
+  w(36,'data');d.setUint32(40,n*c*2,true);
+  const ch=chs.map(i16);let o=44;
+  for(let i=0;i<n;i++)for(let k=0;k<c;k++){d.setInt16(o,ch[k][i],true);o+=2}
+  return new Blob([d],{type:'audio/wav'});
+}
+async function mp3(chs,sr,kbps){
+  const enc=new lamejs.Mp3Encoder(chs.length,sr,kbps),parts=[],B=1152,ch=chs.map(i16),n=ch[0].length;
+  for(let i=0;i<n;i+=B){
+    const d=ch.length>1?enc.encodeBuffer(ch[0].subarray(i,i+B),ch[1].subarray(i,i+B)):enc.encodeBuffer(ch[0].subarray(i,i+B));
+    if(d.length)parts.push(d);
+    if((i/B)%300===0){prog(40+i/n*60);say('Encoding '+Math.round(i/n*100)+'%');await tick()}
+  }
+  const e=enc.flush();if(e.length)parts.push(e);
+  return new Blob(parts,{type:'audio/mpeg'});
+}
+
+$('go').onclick=async()=>{
+  if(!file)return;
+  $('go').disabled=true;prog(5);say('Reading the file…');
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();
+    let buf;
+    try{buf=await ctx.decodeAudioData(await file.arrayBuffer())}
+    catch(e){throw new Error('Could not read audio from this file. It may have no audio track, or your browser cannot decode its format. Try Chrome or Edge.')}
+    finally{ctx.close()}
+    prog(30);
+    const t0=Math.max(0,parseFloat($('t0').value)||0);
+    let t1=parseFloat($('t1').value);
+    if(!(t1>t0)||t1>buf.duration)t1=buf.duration;
+    if(t0>=buf.duration)throw new Error('The start time is past the end of the video.');
+    const sr=buf.sampleRate,chn=+$('ch').value||Math.min(2,buf.numberOfChannels);
+    const len=Math.max(1,Math.floor((t1-t0)*sr));
+    const oc=new OfflineAudioContext(chn,len,sr),src=oc.createBufferSource();
+    src.buffer=buf;src.connect(oc.destination);src.start(0,t0,t1-t0);
+    say('Processing…');await tick();
+    const out=await oc.startRendering(),chs=[];
+    for(let i=0;i<chn;i++)chs.push(out.getChannelData(i));
+    const f=$('fmt').value;
+    const blob=f==='wav'?wav(chs,sr):await mp3(chs,sr,+$('kbps').value);
+    const url=URL.createObjectURL(blob),d=document.createElement('div');d.className='out';
+    d.innerHTML='<b></b><small></small><audio controls></audio><a class="dl">Download</a>';
+    const name=file.name.replace(/\.[^.]+$/,'');
+    d.querySelector('b').textContent=name+'.'+f;
+    const m=Math.floor((t1-t0)/60),s=Math.round((t1-t0)%60);
+    d.querySelector('small').textContent=m+':'+String(s).padStart(2,'0')+' · '+size(blob.size);
+    d.querySelector('audio').src=url;
+    const a=d.querySelector('a');a.href=url;a.download=name+'.'+f;
+    $('results').prepend(d);
+    prog(100);say('Done. Your audio is ready.');
+  }catch(e){say(e.message,1)}
+  finally{$('go').disabled=false;setTimeout(()=>$('bar').style.display='none',800)}
+};
+</script>
+</body>
+</html>

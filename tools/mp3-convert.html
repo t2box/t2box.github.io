@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MP3 Convert – Toolbox</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#14231c;--mute:#5d6e65;--line:#d5ded9;--acc:#0b7a5a;--acc2:#e6f4ee;--err:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1713;--card:#17221c;--ink:#e7f0eb;--mute:#93a69b;--line:#2a3a31;--acc:#3ecf9b;--acc2:#1b2f26;--err:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Hind Siliguri",system-ui,sans-serif;line-height:1.6}
+main{max-width:720px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:1.7rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 22px}
+.drop{border:2px dashed var(--acc);background:var(--acc2);border-radius:14px;padding:34px 16px;text-align:center;cursor:pointer}
+.drop.over{background:var(--card)}
+.drop b{font-size:1.1rem}
+.drop small{display:block;color:var(--mute);margin-top:4px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+label{display:block;font-size:.85rem;color:var(--mute)}
+select,input[type=number]{width:100%;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:11px 22px;font:inherit;font-weight:600;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#06130d}}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.row{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:10px;flex-wrap:wrap}
+.row .nm{flex:1;min-width:140px;overflow-wrap:anywhere}
+.row .st{font-size:.85rem;color:var(--mute)}
+.bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;width:100%}
+.bar i{display:block;height:100%;width:0;background:var(--acc)}
+.err{color:var(--err)}
+a.dl{color:var(--acc);font-weight:600;text-decoration:none;border:1px solid var(--acc);padding:6px 14px;border-radius:8px}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+footer{margin-top:30px;color:var(--mute);font-size:.82rem}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='45' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="sh-in"><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><nav class="sh-nav" aria-label="Main"><a href="../index.html#tools">Tools</a><a href="../index.html#about">About</a><a href="../privacy.html">Privacy</a></nav></div></header>
+
+<main>
+<h1>MP3 Convert</h1>
+<p class="sub">Change bitrate, sample rate and volume, or trim your audio. Everything runs in your browser, so your files are never uploaded.</p>
+
+<div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files">
+  <b>Drop files here or tap to choose</b>
+  <small>MP3, WAV, M4A, OGG, FLAC (multiple files allowed)</small>
+  <input type="file" id="file" accept="audio/*" multiple hidden>
+</div>
+
+<div class="opts">
+  <label>Bitrate (kbps)
+    <select id="kbps"><option>64</option><option>96</option><option>128</option><option selected>192</option><option>256</option><option>320</option></select>
+  </label>
+  <label>Sample rate (Hz)
+    <select id="sr"><option value="0">Original</option><option>22050</option><option>32000</option><option>44100</option><option>48000</option></select>
+  </label>
+  <label>Channels
+    <select id="ch"><option value="0">Original</option><option value="1">Mono</option><option value="2">Stereo</option></select>
+  </label>
+  <label>Volume <span id="vv">100%</span>
+    <input type="range" id="vol" min="10" max="300" value="100">
+  </label>
+  <label>Start (seconds)
+    <input type="number" id="t0" min="0" step="0.1" placeholder="0">
+  </label>
+  <label>End (seconds)
+    <input type="number" id="t1" min="0" step="0.1" placeholder="Full length">
+  </label>
+</div>
+
+<button class="btn" id="go" disabled>Convert</button>
+<button class="btn ghost" id="clr" disabled>Clear list</button>
+
+<div id="list" aria-live="polite"></div>
+<footer>Note: converting MP3 to MP3 re-encodes the audio. A lower bitrate gives a smaller file but lower quality.</footer>
+</main>
+<div class="site-footer"><div class="sf-in">
+<div><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><div class="sf-b">Free online tools for audio, video and images. Everything runs in your browser.</div></div>
+<div><div class="sf-h">Tools</div><a class="sf-l" href="mp3-convert.html">MP3 Convert</a><a class="sf-l" href="resize-image-3000x3000.html">Resize Image to 3000x3000</a><a class="sf-l" href="vocal-remover.html">Vocal Remover</a><a class="sf-l" href="video-to-mp3.html">Video to MP3</a><a class="sf-l" href="image-size-dpi.html">Image Size, DPI and File Size</a></div>
+<div><div class="sf-h">Toolbox</div><a class="sf-l" href="../index.html#about">About</a><a class="sf-l" href="../privacy.html">Privacy Policy</a><a class="sf-l" href="../terms.html">Terms of Use</a></div>
+</div><div class="sf-copy">&copy; 2026 Toolbox. All rights reserved.</div></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let files=[];
+const drop=$('drop'),inp=$('file');
+drop.onclick=()=>inp.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click()}};
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+inp.onchange=()=>{add(inp.files);inp.value=''};
+$('vol').oninput=e=>$('vv').textContent=e.target.value+'%';
+$('clr').onclick=()=>{files=[];$('list').innerHTML='';sync()};
+
+function sync(){$('go').disabled=!files.length;$('clr').disabled=!files.length}
+function fmt(b){return b>1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(0)+' KB'}
+
+function add(fl){
+  for(const f of fl){
+    if(!f.type.startsWith('audio/')&&!/\.(mp3|wav|m4a|ogg|flac|aac)$/i.test(f.name))continue;
+    const row=document.createElement('div');row.className='row';
+    row.innerHTML='<span class="nm"></span><span class="st">'+fmt(f.size)+' · Waiting</span><div class="bar"><i></i></div>';
+    row.querySelector('.nm').textContent=f.name;
+    $('list').appendChild(row);
+    files.push({f,row});
+  }
+  sync();
+}
+
+async function convert(item){
+  const {f,row}=item,st=row.querySelector('.st'),bar=row.querySelector('i');
+  const kbps=+$('kbps').value,vol=$('vol').value/100;
+  st.textContent='Decoding…';
+  const AC=window.AudioContext||window.webkitAudioContext;
+  const ctx=new AC();
+  let buf;
+  try{buf=await ctx.decodeAudioData(await f.arrayBuffer())}finally{ctx.close()}
+  const sr=+$('sr').value||buf.sampleRate;
+  const ch=+$('ch').value||Math.min(2,buf.numberOfChannels);
+  const t0=Math.max(0,parseFloat($('t0').value)||0);
+  let t1=parseFloat($('t1').value);
+  if(!(t1>t0)||t1>buf.duration)t1=buf.duration;
+  if(t0>=buf.duration)throw new Error('Start time is beyond the end of the file');
+  const len=Math.max(1,Math.floor((t1-t0)*sr));
+  const off=new OfflineAudioContext(ch,len,sr);
+  const src=off.createBufferSource();src.buffer=buf;
+  const g=off.createGain();g.gain.value=vol;
+  src.connect(g);g.connect(off.destination);src.start(0,t0,t1-t0);
+  st.textContent='Processing…';
+  const out=await off.startRendering();
+
+  const to16=a=>{const r=new Int16Array(a.length);for(let i=0;i<a.length;i++){const s=Math.max(-1,Math.min(1,a[i]));r[i]=s<0?s*32768:s*32767}return r};
+  const L=to16(out.getChannelData(0)),R=ch>1?to16(out.getChannelData(1)):null;
+  const enc=new lamejs.Mp3Encoder(ch,sr,kbps),parts=[],B=1152;
+  for(let i=0;i<L.length;i+=B){
+    const d=ch>1?enc.encodeBuffer(L.subarray(i,i+B),R.subarray(i,i+B)):enc.encodeBuffer(L.subarray(i,i+B));
+    if(d.length)parts.push(d);
+    if((i/B)%200===0){bar.style.width=(i/L.length*100)+'%';st.textContent='Encoding '+Math.round(i/L.length*100)+'%';await new Promise(r=>setTimeout(r))}
+  }
+  const end=enc.flush();if(end.length)parts.push(end);
+  bar.style.width='100%';
+  const blob=new Blob(parts,{type:'audio/mpeg'});
+  const url=URL.createObjectURL(blob);
+  st.textContent='Done · '+fmt(blob.size);
+  const a=document.createElement('a');a.className='dl';a.href=url;
+  a.download=f.name.replace(/\.[^.]+$/,'')+'-converted.mp3';a.textContent='Download';
+  row.appendChild(a);
+}
+
+$('go').onclick=async()=>{
+  $('go').disabled=true;
+  for(const it of files.filter(x=>!x.done)){
+    try{await convert(it);it.done=true}
+    catch(e){const s=it.row.querySelector('.st');s.textContent='Failed: could not read this file ('+(e.message||'')+')';s.classList.add('err')}
+  }
+  files=files.filter(x=>!x.done);sync();
+};
+</script>
+</body>
+</html>
