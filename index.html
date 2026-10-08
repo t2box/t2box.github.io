@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toolbox – Free Online Audio, Video and Image Tools</title>
+<meta name="description" content="Free online tools to convert audio, resize images, set DPI, extract audio from video and remove vocals. No sign-up, files stay in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='45' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="sh-in"><a class="logo" href="index.html"><span class="logo-mark">T</span>Toolbox</a><nav class="sh-nav" aria-label="Main"><a href="index.html#tools">Tools</a><a href="index.html#about">About</a><a href="privacy.html">Privacy</a></nav></div></header>
+<main>
+<div class="wrap hero">
+<h1>Free online tools for <em>audio, video</em> and images</h1>
+<p class="lead">Convert, resize and clean up your files in seconds. No sign-up, no uploads, and everything runs privately in your browser.</p>
+<div class="search"><input type="search" id="q" placeholder="Search tools" aria-label="Search tools"></div>
+</div>
+<section class="wrap sec" id="tools"><h2>All tools</h2><p class="sd">Pick a tool to get started.</p>
+<div class="cards" id="cards"><a class="card" href="tools/mp3-convert.html" data-k="mp3 convert re-encode audio to mp3. change the bitrate, sample rate and volume, or trim the audio."><div class="ic">MP3</div><b>MP3 Convert</b><span class="cd">Re-encode audio to MP3. Change the bitrate, sample rate and volume, or trim the audio.</span><span class="go">Open tool &rarr;</span></a><a class="card" href="tools/resize-image-3000x3000.html" data-k="resize image to 3000x3000 resize photos to 3000 x 3000 pixels, or any size, and save them as jpg, png or webp."><div class="ic">3K</div><b>Resize Image to 3000x3000</b><span class="cd">Resize photos to 3000 x 3000 pixels, or any size, and save them as JPG, PNG or WebP.</span><span class="go">Open tool &rarr;</span></a><a class="card" href="tools/vocal-remover.html" data-k="vocal remover remove the vocals from a song to make a karaoke track, or pull the vocals out on their own."><div class="ic">VOC</div><b>Vocal Remover</b><span class="cd">Remove the vocals from a song to make a karaoke track, or pull the vocals out on their own.</span><span class="go">Open tool &rarr;</span></a><a class="card" href="tools/video-to-mp3.html" data-k="video to mp3 extract the audio from a video file or a direct video link and save it as mp3 or wav."><div class="ic">VID</div><b>Video to MP3</b><span class="cd">Extract the audio from a video file or a direct video link and save it as MP3 or WAV.</span><span class="go">Open tool &rarr;</span></a><a class="card" href="tools/image-size-dpi.html" data-k="image size, dpi and file size crop and resize in cm, mm, inch or pixels, set the dpi, and compress to a kb or mb limit."><div class="ic">DPI</div><b>Image Size, DPI and File Size</b><span class="cd">Crop and resize in cm, mm, inch or pixels, set the DPI, and compress to a KB or MB limit.</span><span class="go">Open tool &rarr;</span></a></div><div class="none" id="none" hidden>No tool matches your search.</div></section>
+<section class="wrap sec"><h2>Why Toolbox</h2><p class="sd">Simple tools that respect your files.</p>
+<div class="feats">
+<div class="feat"><b>Private by design</b><span>Your files are processed on your own device and are never uploaded to a server.</span></div>
+<div class="feat"><b>Free to use</b><span>No account, no watermark and no limits on how many files you process.</span></div>
+<div class="feat"><b>Fast</b><span>There is no upload or download wait, so results appear as soon as processing finishes.</span></div>
+<div class="feat"><b>Works on any device</b><span>Use it on a phone, tablet or computer, in light or dark mode.</span></div>
+</div></section>
+<section class="wrap sec" id="faq"><h2>Frequently asked questions</h2><p class="sd">&nbsp;</p>
+<details><summary>Are my files uploaded anywhere?</summary><div>No. Every tool runs in your browser, and your files stay on your device.</div></details>
+<details><summary>Do I need to create an account?</summary><div>No. Open a tool, add your file and download the result.</div></details>
+<details><summary>Is there a file size limit?</summary><div>Toolbox sets no limit, but your browser's memory does. Very large files, especially videos, may be slow or fail on phones. A computer handles them best.</div></details>
+<details><summary>Which browsers work best?</summary><div>The latest Chrome, Edge, Firefox and Safari. Chrome and Edge support the most video formats.</div></details>
+<details><summary>Do the tools need an internet connection?</summary><div>You need to be online when a page opens, because some tools load open-source helper libraries. Your files are still processed locally.</div></details>
+</section>
+<section class="wrap sec" id="about"><h2>About Toolbox</h2><p class="sd">A growing collection of free browser tools.</p>
+<p style="color:var(--mute);max-width:720px;margin:0">Toolbox brings everyday media tools together in one place: convert audio, resize images to exact sizes and DPI, extract audio from video and make karaoke tracks. Each tool is built to do one job well, with no installation and no sign-up. Please use files you own or have permission to edit.</p></section>
+</main>
+<script>
+const q=document.getElementById('q'),cs=[...document.querySelectorAll('#cards .card')],none=document.getElementById('none');
+q.addEventListener('input',()=>{const t=q.value.trim().toLowerCase();let n=0;
+cs.forEach(c=>{const m=!t||c.dataset.k.includes(t);c.hidden=!m;if(m)n++});none.hidden=n>0});
+</script>
+<div class="site-footer"><div class="sf-in">
+<div><a class="logo" href="index.html"><span class="logo-mark">T</span>Toolbox</a><div class="sf-b">Free online tools for audio, video and images. Everything runs in your browser.</div></div>
+<div><div class="sf-h">Tools</div><a class="sf-l" href="tools/mp3-convert.html">MP3 Convert</a><a class="sf-l" href="tools/resize-image-3000x3000.html">Resize Image to 3000x3000</a><a class="sf-l" href="tools/vocal-remover.html">Vocal Remover</a><a class="sf-l" href="tools/video-to-mp3.html">Video to MP3</a><a class="sf-l" href="tools/image-size-dpi.html">Image Size, DPI and File Size</a></div>
+<div><div class="sf-h">Toolbox</div><a class="sf-l" href="index.html#about">About</a><a class="sf-l" href="privacy.html">Privacy Policy</a><a class="sf-l" href="terms.html">Terms of Use</a></div>
+</div><div class="sf-copy">&copy; 2026 Toolbox. All rights reserved.</div></div>
+</body>
+</html>
