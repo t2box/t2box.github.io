@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T2BOX – MP3 Convert, Image Tools and PDF Tools</title>
-<meta name="description" content="T2BOX: free online tools to convert MP3 audio, resize images to 3000x3000, and crop or resize photos in cm, mm, inch or pixels with exact DPI and file size. Also merge, split, rotate and convert PDF files. Runs in your browser, no signup.">
+<title>T2BOX – MP3 Convert, Image Tools, Photo Print and PDF Tools</title>
+<meta name="description" content="T2BOX: free online tools to convert MP3 audio, resize images to 3000x3000, and crop or resize photos in cm, mm, inch or pixels with exact DPI and file size. Print passport photos on A4 and merge, split, rotate or convert PDF files. Runs in your browser, no signup.">
 <meta name="theme-color" content="#020a0d">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23031418'/%3E%3Cpath d='M20 24c4-10 24-10 22 2-2 10-16 14-22 26 10-4 18 2 28-2' fill='none' stroke='%231fe5d2' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@ body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--body);line-hei
 [hidden]{display:none!important}
 
 /* header */
-header.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 0}
+header.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 0}
 .logo{display:block;height:34px;width:auto;aspect-ratio:400/104}
 .privacy{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--mute)}
 .privacy i{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px 2px rgba(31,229,210,.7)}
@@ -111,7 +111,7 @@ footer.note{margin-top:22px;color:var(--mute);font-size:.84rem}
 canvas#s_pv{max-width:100%;touch-action:none;cursor:grab;box-shadow:0 0 0 2px var(--teal)}
 .hint{color:var(--mute);font-size:.82rem;margin-top:8px}
 .box label{margin-top:12px}
-.box label:first-child{margin-top:0}
+.box>label:first-child{margin-top:0}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:.92rem}
 .chk input{accent-color:var(--teal);width:18px;height:18px}
@@ -173,6 +173,37 @@ footer.site .logo{height:22px;opacity:.9}
   .horizon::after{animation:none;display:none}
   *{transition:none!important}
 }
+
+/* photo print */
+.work>div>.box+.box{margin-top:16px}
+.dropsm{padding:20px 12px}
+.phl{margin-top:12px;display:grid;gap:8px}
+.ph{display:flex;align-items:center;gap:10px;background:rgba(3,14,18,.65);border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.ph:hover{border-color:var(--line2)}
+.ph.sel{border-color:var(--teal);box-shadow:0 0 0 1px rgba(31,229,210,.3)}
+.ph img{width:44px;height:54px;object-fit:cover;border-radius:6px;background:var(--panel2);flex:none}
+.ph .nm{flex:1;min-width:0;font-size:.88rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph label{margin:0;font-size:.72rem;width:64px}
+.ph input{margin-top:2px;padding:6px 8px;text-align:center}
+.ph button{background:none;border:1px solid var(--line);border-radius:8px;color:var(--ink);width:30px;height:30px;cursor:pointer;font:inherit;flex:none}
+.ph button:hover{border-color:var(--err);color:var(--err)}
+canvas#h_pv{max-width:100%;height:auto;background:#fff;box-shadow:0 10px 40px -10px rgba(0,0,0,.8),0 0 0 1px rgba(31,229,210,.25)}
+canvas#h_cr{max-width:100%;height:auto;touch-action:none;cursor:grab;background:#fff;box-shadow:0 0 0 2px var(--teal)}
+canvas#h_cr:active{cursor:grabbing}
+.pager{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;color:var(--mute);font-size:.9rem}
+.pager button{background:none;border:1px solid var(--line2);border-radius:8px;color:var(--teal);padding:4px 12px;cursor:pointer;font:inherit}
+.pager button:disabled{opacity:.35;cursor:default}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.acts .btn{margin:0;width:100%}
+.acts .btn.ghost{margin:0}
+.acts .wide{grid-column:1/-1}
+.cropw{display:flex;justify-content:center;margin-bottom:10px}
+
+/* tab layout for five tools */
+.tabs{grid-template-columns:repeat(5,1fr)}
+.tab{flex-direction:column;text-align:center;padding:16px 8px;gap:10px}
+.tab small{font-size:.78rem}
+@media (max-width:560px){.tabs{grid-template-columns:repeat(3,1fr)}.tab{padding:12px 6px}.tab small{display:none}.acts{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -212,14 +243,14 @@ footer.site .logo{height:22px;opacity:.9}
 </svg>
 
 <div class="wrap">
-  <header class="bar">
+  <header class="topbar">
     <a href="#audio" aria-label="T2BOX home"><svg class="logo" role="img" aria-label="T2BOX"><use href="#t2box-logo"/></svg></a>
     <div class="privacy"><i></i><span>Runs in your browser. Files stay on your device.</span></div>
   </header>
 
   <section class="hero">
-    <h1>Convert audio.<br>Resize images.</h1>
-    <p class="lead">T2BOX is a free toolbox that works right in your browser. No signup, no uploads, no waiting in a queue.</p>
+    <h1>Convert. Resize.<br>Print. Merge.</h1>
+    <p class="lead">T2BOX is a free toolbox for audio, photos and PDFs that works right in your browser. No signup, no uploads, no waiting in a queue.</p>
 
     <div class="tabs" role="tablist" aria-label="Tools">
       <button class="tab" role="tab" id="tab-audio" aria-controls="p-audio" aria-selected="true">
@@ -233,6 +264,10 @@ footer.site .logo{height:22px;opacity:.9}
       <button class="tab" role="tab" id="tab-size" aria-controls="p-size" aria-selected="false">
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v14a1 1 0 001 1h13M3 7h14a1 1 0 011 1v13"/></svg></span>
         <span><b>Size &amp; DPI</b><small>Crop in cm, mm, inch, KB</small></span>
+      </button>
+      <button class="tab" role="tab" id="tab-photo" aria-controls="p-photo" aria-selected="false">
+        <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="9" rx="1.5"/><rect x="3" y="15" width="7" height="6" rx="1.5"/><rect x="14" y="15" width="7" height="6" rx="1.5"/></svg></span>
+        <span><b>Photo Print</b><small>Passport photos on A4</small></span>
       </button>
       <button class="tab" role="tab" id="tab-pdf" aria-controls="p-pdf" aria-selected="false">
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
@@ -390,6 +425,72 @@ footer.site .logo{height:22px;opacity:.9}
   </section>
 </div>
 </section>
+<section class="panel" id="p-photo" role="tabpanel" aria-labelledby="tab-photo" hidden>
+<h2 class="pt">Photo Print on A4</h2>
+<p class="sub">Place passport, visa or ID photos on an A4 sheet, ready to print or save as PDF. Pick the photo size, set how many copies you need and adjust the crop. Your photos never leave your device.</p>
+<div class="work">
+ <div>
+  <div class="box">
+    <h2>1. Photos</h2>
+    <div class="drop dropsm" id="h_drop" tabindex="0" role="button" aria-label="Choose photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg><b>Add photos</b><small>JPG, PNG, WebP (multiple allowed)</small><input type="file" id="h_file" accept="image/*" multiple hidden></div>
+    <div class="phl" id="h_list"></div>
+  </div>
+  <div class="box">
+    <h2>2. Photo size</h2>
+    <label>Size
+      <select id="h_size">
+        <option value="35x45">35 × 45 mm (passport)</option>
+        <option value="40x50">40 × 50 mm</option>
+        <option value="50.8x50.8">2 × 2 in (US passport)</option>
+        <option value="30x40">30 × 40 mm</option>
+        <option value="25x35">25 × 35 mm</option>
+        <option value="20x25">20 × 25 mm (stamp)</option>
+        <option value="custom">Custom size</option>
+      </select>
+    </label>
+    <div class="two" id="h_custom" hidden>
+      <label>Width<input type="number" id="h_cw" value="35" min="1" step="0.1"></label>
+      <label>Height<input type="number" id="h_ch" value="45" min="1" step="0.1"></label>
+    </div>
+    <label id="h_unitl" hidden>Unit<select id="h_unit"><option value="1">mm</option><option value="10">cm</option><option value="25.4">inch</option></select></label>
+  </div>
+  <div class="box">
+    <h2>3. Page</h2>
+    <div class="two">
+      <label>Paper<select id="h_paper"><option value="a4">A4</option><option value="a5">A5</option><option value="letter">Letter</option><option value="4x6">4 × 6 in</option><option value="5x7">5 × 7 in</option></select></label>
+      <label>Orientation<select id="h_orient"><option value="p">Portrait</option><option value="l">Landscape</option></select></label>
+    </div>
+    <div class="two">
+      <label>Margin (mm)<input type="number" id="h_margin" value="5" min="0" step="0.5"></label>
+      <label>Gap (mm)<input type="number" id="h_gap" value="2" min="0" step="0.5"></label>
+    </div>
+    <label class="chk"><input type="checkbox" id="h_cut" checked> Show cutting lines</label>
+    <label class="chk"><input type="checkbox" id="h_fill"> Fill the whole page</label>
+  </div>
+ </div>
+ <div>
+  <div class="box">
+    <h2>Preview</h2>
+    <div class="cropstage"><canvas id="h_pv" width="560" height="792"></canvas></div>
+    <div class="pager" id="h_pager" hidden><button id="h_prev" aria-label="Previous page">&larr;</button><span id="h_pg"></span><button id="h_next" aria-label="Next page">&rarr;</button></div>
+    <div class="calc" id="h_info"></div>
+    <div class="acts">
+      <button class="btn" id="h_pdf" disabled>Download PDF</button>
+      <button class="btn ghost" id="h_jpg" disabled>Download JPG</button>
+      <button class="btn ghost wide" id="h_print" disabled>Print</button>
+    </div>
+    <div class="msg" id="h_msg" aria-live="polite"></div>
+  </div>
+  <div class="box" id="h_cropbox" hidden>
+    <h2>Adjust crop</h2>
+    <div class="cropw"><canvas id="h_cr" width="260" height="334"></canvas></div>
+    <label>Zoom <span id="h_zv">100%</span><input type="range" id="h_zoom" min="50" max="300" value="100"></label>
+    <p class="hint">Drag the photo to move it. Lower the zoom below 100% to show the whole photo with white edges.</p>
+    <button class="btn ghost" id="h_reset" style="margin:6px 0 0">Reset crop</button>
+  </div>
+ </div>
+</div>
+</section>
 <section class="panel" id="p-pdf" role="tabpanel" aria-labelledby="tab-pdf" hidden>
 <div id="p_home">
   <h2 class="pt">Every tool you need to work with PDFs</h2>
@@ -426,24 +527,24 @@ document.getElementById('yr').textContent=new Date().getFullYear();
 
 /* Tabs */
 (()=>{
-const tabs=[['tab-audio','p-audio'],['tab-image','p-image'],['tab-size','p-size'],['tab-pdf','p-pdf']],hs=['#audio','#image','#size','#pdf'];
-const fromHash=()=>location.hash.startsWith('#pdf')?3:Math.max(0,hs.indexOf(location.hash));
-function show(i,focus){
-  const was=document.getElementById(tabs[i][1]).hidden;
-  tabs.forEach(([t,p],j)=>{
-    const b=document.getElementById(t),on=j===i;
+const names=['audio','image','size','photo','pdf'];
+const fromHash=()=>location.hash.startsWith('#pdf')?'pdf':(names.includes(location.hash.slice(1))?location.hash.slice(1):'audio');
+function show(n,focus){
+  const was=document.getElementById('p-'+n).hidden;
+  names.forEach(k=>{
+    const b=document.getElementById('tab-'+k),on=k===n;
     b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;
-    document.getElementById(p).hidden=!on;
+    document.getElementById('p-'+k).hidden=!on;
   });
-  if(!(i===3&&location.hash.startsWith('#pdf')))history.replaceState(null,'',hs[i]);
+  if(!(n==='pdf'&&location.hash.startsWith('#pdf')))history.replaceState(null,'','#'+n);
   if(was)window.dispatchEvent(new Event('t2route'));
-  if(focus)document.getElementById(tabs[i][0]).focus();
+  if(focus)document.getElementById('tab-'+n).focus();
 }
-tabs.forEach(([t],i)=>{
-  const b=document.getElementById(t);
-  b.onclick=()=>show(i);
+names.forEach((n,i)=>{
+  const b=document.getElementById('tab-'+n);
+  b.onclick=()=>show(n);
   b.onkeydown=e=>{
-    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();show((i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length,true)}
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();show(names[(i+(e.key==='ArrowRight'?1:names.length-1))%names.length],true)}
   };
 });
 window.addEventListener('hashchange',()=>show(fromHash()));
@@ -764,6 +865,186 @@ $('go').onclick=async()=>{
   }catch(e){say(e.message||'Something went wrong.',1)}
   finally{$('go').disabled=false}
 };
+})();
+/* Photo Print */
+(()=>{
+const $=id=>document.getElementById('h_'+id);
+const PAPERS={a4:[210,297],a5:[148,210],letter:[215.9,279.4],'4x6':[101.6,152.4],'5x7':[127,177.8]};
+let photos=[],sel=null,page=0,uid=0;
+const num=(id,d)=>{const v=parseFloat($(id).value);return isFinite(v)&&v>=0?v:d};
+const say=(t,err)=>{$('msg').textContent=t||'';$('msg').classList.toggle('err',!!err)};
+
+function getSize(){
+  const v=$('size').value;
+  if(v==='custom'){const u=+$('unit').value;return[Math.max(1,num('cw',35))*u,Math.max(1,num('ch',45))*u]}
+  return v.split('x').map(Number);
+}
+function layout(){
+  let [pw,ph]=PAPERS[$('paper').value];
+  if($('orient').value==='l')[pw,ph]=[ph,pw];
+  const [w,h]=getSize(),m=num('margin',5),g=num('gap',2);
+  const cols=Math.max(0,Math.floor((pw-2*m+g+1e-6)/(w+g))),rows=Math.max(0,Math.floor((ph-2*m+g+1e-6)/(h+g)));
+  return{pw,ph,w,h,m,g,cols,rows,cap:cols*rows};
+}
+function items(L){
+  const a=[];
+  if(!photos.length||!L.cap)return a;
+  if($('fill').checked){for(let i=0;i<L.cap;i++)a.push(photos[i%photos.length])}
+  else photos.forEach(p=>{for(let i=0;i<p.copies;i++)a.push(p)});
+  return a;
+}
+function drawPhoto(ctx,p,dx,dy,dw,dh){
+  const iw=p.img.naturalWidth,ih=p.img.naturalHeight,asp=dw/dh;
+  const ch=Math.min(ih,iw/asp)/p.zoom,cw=ch*asp,sx=p.cx-cw/2,sy=p.cy-ch/2,s=dw/cw;
+  ctx.save();ctx.beginPath();ctx.rect(dx,dy,dw,dh);ctx.clip();
+  ctx.fillStyle='#fff';ctx.fillRect(dx,dy,dw,dh);
+  ctx.imageSmoothingQuality='high';
+  ctx.translate(dx-sx*s,dy-sy*s);ctx.scale(s,s);ctx.drawImage(p.img,0,0);
+  ctx.restore();
+}
+function renderPage(cv,idx,k,L,arr){
+  cv.width=Math.round(L.pw*k);cv.height=Math.round(L.ph*k);
+  const x=cv.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);
+  if(!L.cap)return;
+  const x0=(L.pw-(L.cols*L.w+(L.cols-1)*L.g))/2;
+  const start=idx*L.cap;
+  for(let n=0;n<L.cap&&start+n<arr.length;n++){
+    const c=n%L.cols,r=Math.floor(n/L.cols);
+    const dx=(x0+c*(L.w+L.g))*k,dy=(L.m+r*(L.h+L.g))*k,dw=L.w*k,dh=L.h*k;
+    drawPhoto(x,arr[start+n],dx,dy,dw,dh);
+    if($('cut').checked){x.strokeStyle='#8a9a9d';x.lineWidth=Math.max(1,k*.15);x.strokeRect(dx,dy,dw,dh)}
+  }
+}
+let raf=0;
+function refresh(){cancelAnimationFrame(raf);raf=requestAnimationFrame(update)}
+function update(){
+  const L=layout(),arr=items(L),pages=L.cap?Math.max(1,Math.ceil(arr.length/L.cap)):1;
+  if(page>=pages)page=pages-1;
+  renderPage($('pv'),page,Math.min(560/L.pw,900/L.ph),L,arr);
+  $('pager').hidden=pages<2;
+  $('pg').textContent='Page '+(page+1)+' of '+pages;
+  $('prev').disabled=page===0;$('next').disabled=page>=pages-1;
+  const none=!arr.length;
+  ['pdf','jpg','print'].forEach(i=>$(i).disabled=none);
+  if(!L.cap){$('info').textContent='';say('This photo size does not fit on the page. Choose a smaller size or margin.',true)}
+  else{
+    say('');
+    $('info').textContent=photos.length?arr.length+' photos · '+L.cols+' × '+L.rows+' per page · '+pages+(pages>1?' pages':' page'):'Add a photo to see it on the page.';
+  }
+  drawCrop();
+}
+function renderList(){
+  const box=$('list');box.innerHTML='';
+  photos.forEach(p=>{
+    const d=document.createElement('div');d.className='ph'+(p===sel?' sel':'');
+    d.innerHTML='<img alt=""><span class="nm"></span><label>Copies<input type="number" min="1" max="200"></label><button aria-label="Remove photo">&times;</button>';
+    d.querySelector('img').src=p.url;
+    d.querySelector('.nm').textContent=p.name;
+    const inp=d.querySelector('input');inp.value=p.copies;inp.disabled=$('fill').checked;
+    inp.onclick=e=>e.stopPropagation();
+    inp.oninput=()=>{p.copies=Math.max(1,Math.min(200,parseInt(inp.value)||1));refresh()};
+    d.querySelector('button').onclick=e=>{e.stopPropagation();photos=photos.filter(x=>x!==p);if(sel===p)sel=photos[0]||null;renderList();refresh()};
+    d.onclick=()=>{sel=p;renderList();drawCrop()};
+    box.appendChild(d);
+  });
+  $('cropbox').hidden=!sel;
+}
+function drawCrop(){
+  $('cropbox').hidden=!sel;
+  if(!sel)return;
+  const [w,h]=getSize(),cv=$('cr');
+  let W=260,H=W*h/w;if(H>340){H=340;W=H*w/h}
+  cv.width=Math.round(W);cv.height=Math.round(H);
+  drawPhoto(cv.getContext('2d'),sel,0,0,cv.width,cv.height);
+  $('zoom').value=Math.round(sel.zoom*100);$('zv').textContent=Math.round(sel.zoom*100)+'%';
+}
+function add(fl){
+  for(const f of fl){
+    if(!f.type.startsWith('image/'))continue;
+    const url=URL.createObjectURL(f),img=new Image();
+    img.onload=()=>{
+      const p={id:++uid,name:f.name,img,url,copies:6,zoom:1,cx:img.naturalWidth/2,cy:img.naturalHeight/2};
+      photos.push(p);if(!sel)sel=p;renderList();refresh();
+    };
+    img.onerror=()=>say('Could not read '+f.name,true);
+    img.src=url;
+  }
+}
+
+/* events */
+const drop=$('drop');
+drop.onclick=()=>$('file').click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click()}};
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+$('file').onchange=()=>{add($('file').files);$('file').value=''};
+['size','cw','ch','unit','paper','orient','margin','gap','cut'].forEach(id=>$(id).addEventListener('input',()=>{
+  if(id==='size'){const c=$('size').value==='custom';$('custom').hidden=!c;$('unitl').hidden=!c}
+  page=0;refresh();
+}));
+$('fill').onchange=()=>{renderList();page=0;refresh()};
+$('prev').onclick=()=>{page--;refresh()};
+$('next').onclick=()=>{page++;refresh()};
+$('zoom').oninput=e=>{if(sel){sel.zoom=e.target.value/100;refresh()}};
+$('reset').onclick=()=>{if(sel){sel.zoom=1;sel.cx=sel.img.naturalWidth/2;sel.cy=sel.img.naturalHeight/2;refresh()}};
+(()=>{
+  const cv=$('cr');let drag=null;
+  cv.onpointerdown=e=>{if(!sel)return;drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)};
+  cv.onpointermove=e=>{
+    if(!drag||!sel)return;
+    const r=cv.getBoundingClientRect(),iw=sel.img.naturalWidth,ih=sel.img.naturalHeight,asp=cv.width/cv.height;
+    const ch=Math.min(ih,iw/asp)/sel.zoom,srcPerPx=ch/r.height;
+    sel.cx=Math.max(0,Math.min(iw,sel.cx-(e.clientX-drag.x)*srcPerPx));
+    sel.cy=Math.max(0,Math.min(ih,sel.cy-(e.clientY-drag.y)*srcPerPx));
+    drag={x:e.clientX,y:e.clientY};refresh();
+  };
+  cv.onpointerup=cv.onpointercancel=()=>{drag=null};
+})();
+
+/* output */
+const blobOf=(cv,type,q)=>new Promise(r=>cv.toBlob(r,type,q));
+function pagesCount(L,arr){return L.cap?Math.max(1,Math.ceil(arr.length/L.cap)):0}
+async function renderAll(dpi){
+  const L=layout(),arr=items(L),n=pagesCount(L,arr),k=dpi/25.4,out=[];
+  for(let i=0;i<n;i++){const cv=document.createElement('canvas');renderPage(cv,i,k,L,arr);out.push(cv)}
+  return{L,out};
+}
+function save(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+async function busy(btn,fn){
+  const t=btn.textContent;btn.disabled=true;btn.textContent='Please wait…';say('');
+  try{await fn()}catch(e){say('Something went wrong: '+(e.message||e),true)}
+  btn.textContent=t;btn.disabled=false;
+}
+$('jpg').onclick=()=>busy($('jpg'),async()=>{
+  const {out}=await renderAll(300);
+  for(let i=0;i<out.length;i++){save(await blobOf(out[i],'image/jpeg',.95),'t2box-photos'+(out.length>1?'-'+(i+1):'')+'.jpg');await new Promise(r=>setTimeout(r,250))}
+});
+$('pdf').onclick=()=>busy($('pdf'),async()=>{
+  if(typeof PDFLib==='undefined')throw new Error('PDF library could not load. Check your internet connection.');
+  const {L,out}=await renderAll(300),doc=await PDFLib.PDFDocument.create();
+  for(const cv of out){
+    const img=await doc.embedJpg(await (await blobOf(cv,'image/jpeg',.95)).arrayBuffer());
+    const pg=doc.addPage([L.pw/25.4*72,L.ph/25.4*72]);
+    pg.drawImage(img,{x:0,y:0,width:pg.getWidth(),height:pg.getHeight()});
+  }
+  save(new Blob([await doc.save()],{type:'application/pdf'}),'t2box-photos.pdf');
+});
+$('print').onclick=()=>busy($('print'),async()=>{
+  const {L,out}=await renderAll(200);
+  const f=document.createElement('iframe');
+  f.style.cssText='position:fixed;left:-9999px;top:0;width:1px;height:1px;border:0';
+  document.body.appendChild(f);
+  const d=f.contentDocument;
+  d.open();
+  d.write('<!DOCTYPE html><html><head><style>@page{size:'+L.pw+'mm '+L.ph+'mm;margin:0}html,body{margin:0}img{display:block;width:'+L.pw+'mm;height:'+L.ph+'mm;page-break-after:always}</style></head><body>'+out.map(c=>'<img src="'+c.toDataURL('image/jpeg',.92)+'">').join('')+'</body></html>');
+  d.close();
+  await new Promise(r=>setTimeout(r,400));
+  f.contentWindow.focus();f.contentWindow.print();
+  setTimeout(()=>f.remove(),60000);
+});
+update();
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
