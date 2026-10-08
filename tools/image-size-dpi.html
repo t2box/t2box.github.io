@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Size, DPI and File Size – Toolbox</title>
+<meta name="description" content="Crop and resize images in cm, mm, inch or pixels, set the DPI, and compress to an exact file size in KB or MB. Free, runs in your browser.">
+<style>
+:root{--bg:#f2f5fb;--card:#fff;--ink:#16203a;--mute:#5f6b87;--line:#d9e0f0;--acc:#2f5bea;--acc2:#e8eeff}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1424;--card:#171e35;--ink:#e9eeff;--mute:#9aa7c9;--line:#2a3558;--acc:#7b9bff;--acc2:#1d2747}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+main{max-width:960px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:clamp(1.6rem,5vw,2.3rem);line-height:1.15;margin:0 0 8px}
+.sub{color:var(--mute);margin:0 0 20px}
+.drop{border:2px dashed var(--acc);background:var(--acc2);border-radius:14px;padding:30px 16px;text-align:center;cursor:pointer}
+.drop.over{background:var(--card)}
+.drop b{font-size:1.1rem}
+.drop small{display:block;color:var(--mute);margin-top:4px}
+.work{display:grid;gap:16px;margin-top:18px}
+@media(min-width:800px){.work{grid-template-columns:380px 1fr;align-items:start}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.box h2{font-size:1rem;margin:0 0 10px}
+.stage{display:grid;place-items:center;background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0/16px 16px;border-radius:10px;min-height:200px;padding:10px}
+canvas#pv{max-width:100%;touch-action:none;cursor:grab;box-shadow:0 0 0 2px var(--acc)}
+.hint{color:var(--mute);font-size:.82rem;margin-top:8px}
+label{display:block;font-size:.85rem;color:var(--mute);margin-top:12px}
+label:first-child{margin-top:0}
+select,input[type=number],input[type=color]{width:100%;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=color]{padding:2px;height:38px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:.92rem}
+.chk input{accent-color:var(--acc);width:18px;height:18px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{background:var(--acc2);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:4px 11px;font:inherit;font-size:.8rem;cursor:pointer}
+.calc{margin-top:10px;font-size:.88rem;color:var(--acc);font-weight:600}
+.btn{width:100%;margin-top:16px;background:var(--acc);color:#fff;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#0b1330}}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{margin-top:10px;font-size:.9rem;color:var(--mute)}
+.msg.err{color:#d12c27}
+@media (prefers-color-scheme:dark){.msg.err{color:#ff8a85}}
+.res{margin-top:14px;text-align:center}
+.res img{max-width:100%;max-height:260px;border-radius:8px;border:1px solid var(--line)}
+.res p{margin:8px 0;color:var(--mute);font-size:.9rem}
+a.dl{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;font-weight:700;padding:11px 26px;border-radius:10px}
+@media (prefers-color-scheme:dark){a.dl{color:#0b1330}}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5bea'/%3E%3Ctext x='32' y='45' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="sh-in"><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><nav class="sh-nav" aria-label="Main"><a href="../index.html#tools">Tools</a><a href="../index.html#about">About</a><a href="../privacy.html">Privacy</a></nav></div></header>
+
+<main>
+<h1>Image Size, DPI and File Size</h1>
+<p class="sub">Crop and resize a photo to an exact size in cm, mm, inch or pixels, set the DPI yourself, and shrink the file to the KB or MB limit you need. Your image never leaves your device.</p>
+
+<div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose an image">
+  <b>Drop an image here or tap to choose</b>
+  <small>JPG, PNG, WebP, GIF, BMP</small>
+  <input type="file" id="file" accept="image/*" hidden>
+</div>
+
+<div class="work" id="work" hidden>
+  <section class="box" aria-label="Crop preview">
+    <h2>Crop preview</h2>
+    <div class="stage"><canvas id="pv" aria-label="Crop area. Drag to move the image."></canvas></div>
+    <div class="hint" id="hint">Drag the image to choose the part you want to keep.</div>
+    <label>Zoom <span id="zv">100%</span><input type="range" id="zoom" min="100" max="400" value="100"></label>
+    <label>When the shape differs from the photo
+      <select id="fit">
+        <option value="crop">Crop to fill (move and zoom)</option>
+        <option value="fit">Keep the whole image, add background</option>
+        <option value="stretch">Stretch to fit</option>
+      </select>
+    </label>
+    <label id="bgl">Background colour<input type="color" id="bg" value="#ffffff"></label>
+  </section>
+
+  <section class="box" aria-label="Size settings">
+    <h2>Output size</h2>
+    <div class="chips" id="chips"></div>
+    <div class="two" style="margin-top:12px">
+      <label>Unit
+        <select id="unit"><option value="cm">cm</option><option value="mm">mm</option><option value="in">inch</option><option value="px">pixels</option></select>
+      </label>
+      <label>DPI<input type="number" id="dpi" value="300" min="1" max="2400"></label>
+    </div>
+    <div class="two">
+      <label>Width<input type="number" id="w" value="3.5" min="0.01" step="any"></label>
+      <label>Height<input type="number" id="h" value="4.5" min="0.01" step="any"></label>
+    </div>
+    <label class="chk"><input type="checkbox" id="keep"> Keep the photo's original ratio (height is automatic)</label>
+    <div class="calc" id="calc"></div>
+
+    <label>Format
+      <select id="fmt"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select>
+    </label>
+    <label class="chk"><input type="checkbox" id="lim"> Limit the file size</label>
+    <div class="two" id="limrow" hidden>
+      <label>Maximum size<input type="number" id="lv" value="50" min="1" step="any"></label>
+      <label>Unit<select id="lu"><option value="1024">KB</option><option value="1048576">MB</option></select></label>
+    </div>
+    <label id="ql">Quality <span id="qv">92%</span><input type="range" id="q" min="10" max="100" value="92"></label>
+
+    <button class="btn" id="go">Create image</button>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="res" id="res" hidden>
+      <img id="ri" alt="Result preview">
+      <p id="rinfo"></p>
+      <a class="dl" id="rdl">Download</a>
+    </div>
+  </section>
+</div>
+</main>
+<div class="site-footer"><div class="sf-in">
+<div><a class="logo" href="../index.html"><span class="logo-mark">T</span>Toolbox</a><div class="sf-b">Free online tools for audio, video and images. Everything runs in your browser.</div></div>
+<div><div class="sf-h">Tools</div><a class="sf-l" href="mp3-convert.html">MP3 Convert</a><a class="sf-l" href="resize-image-3000x3000.html">Resize Image to 3000x3000</a><a class="sf-l" href="vocal-remover.html">Vocal Remover</a><a class="sf-l" href="video-to-mp3.html">Video to MP3</a><a class="sf-l" href="image-size-dpi.html">Image Size, DPI and File Size</a></div>
+<div><div class="sf-h">Toolbox</div><a class="sf-l" href="../index.html#about">About</a><a class="sf-l" href="../privacy.html">Privacy Policy</a><a class="sf-l" href="../terms.html">Terms of Use</a></div>
+</div><div class="sf-copy">&copy; 2026 Toolbox. All rights reserved.</div></div>
+
+
+<script>
+const $=id=>document.getElementById(id);
+let img=null,name='image',u=.5,v=.5,prevUnit='cm';
+const MAXPX=12000;
+
+const toPx=(x,un,d)=>un==='px'?x:un==='in'?x*d:un==='cm'?x/2.54*d:x/25.4*d;
+const fromPx=(p,un,d)=>un==='px'?p:un==='in'?p/d:un==='cm'?p/d*2.54:p/d*25.4;
+const dec={px:0,in:2,cm:2,mm:1};
+const nice=(x,un)=>+x.toFixed(dec[un]);
+function say(t,err){const m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
+const fmtSize=b=>b>=1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(1)+' KB';
+
+// presets
+[['Passport 35x45 mm','mm',35,45,300],['Visa 2x2 inch','in',2,2,300],['Stamp 20x25 mm','mm',20,25,300],
+ ['Signature 6x2 cm','cm',6,2,200],['4x6 inch photo','in',4,6,300],['A4','cm',21,29.7,300],['Square 500 px','px',500,500,72]]
+.forEach(([t,un,w,h,d])=>{const b=document.createElement('button');b.type='button';b.textContent=t;
+  b.onclick=()=>{$('keep').checked=false;$('unit').value=un;prevUnit=un;$('w').value=w;$('h').value=h;$('dpi').value=d;u=v=.5;update()};
+  $('chips').appendChild(b)});
+
+// load
+const drop=$('drop'),fi=$('file');
+drop.onclick=()=>fi.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fi.click()}};
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>load(e.dataTransfer.files[0]));
+fi.onchange=()=>{load(fi.files[0]);fi.value=''};
+function load(f){
+  if(!f)return;
+  if(!f.type.startsWith('image/'))return say('Please choose an image file.',1);
+  const im=new Image(),url=URL.createObjectURL(f);
+  im.onload=()=>{img=im;name=f.name.replace(/\.[^.]+$/,'');u=v=.5;$('zoom').value=100;$('zv').textContent='100%';
+    $('work').hidden=false;$('res').hidden=true;say('');update()};
+  im.onerror=()=>say('This image could not be read.',1);
+  im.src=url;
+}
+
+// size math
+function target(){
+  const un=$('unit').value,d=Math.max(1,+$('dpi').value||72);
+  let w=+$('w').value||1,h=+$('h').value||1;
+  if($('keep').checked&&img){h=w*img.naturalHeight/img.naturalWidth}
+  return {W:Math.max(1,Math.round(toPx(w,un,d))),H:Math.max(1,Math.round(toPx(h,un,d))),un,d,w,h};
+}
+function paint(ctx,W,H,k){
+  ctx.save();ctx.scale(k,k);
+  ctx.fillStyle=$('bg').value;ctx.fillRect(0,0,W,H);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  const iw=img.naturalWidth,ih=img.naturalHeight,m=$('fit').value;
+  if(m==='crop'){
+    const s=Math.max(W/iw,H/ih)*($('zoom').value/100),dw=iw*s,dh=ih*s;
+    u=dw>W?Math.min(Math.max(u,W/2/dw),1-W/2/dw):.5;
+    v=dh>H?Math.min(Math.max(v,H/2/dh),1-H/2/dh):.5;
+    ctx.drawImage(img,W/2-u*dw,H/2-v*dh,dw,dh);
+  }else if(m==='fit'){
+    const s=Math.min(W/iw,H/ih),dw=iw*s,dh=ih*s;ctx.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh);
+  }else ctx.drawImage(img,0,0,W,H);
+  ctx.restore();
+}
+function update(){
+  if(!img)return;
+  const t=target();
+  $('calc').textContent=`Result: ${t.W} x ${t.H} pixels at ${t.d} DPI`;
+  if($('keep').checked)$('h').value=nice(t.h,t.un);
+  const box=340,fw=t.W>=t.H?box:Math.round(box*t.W/t.H),fh=t.W>=t.H?Math.round(box*t.H/t.W):box;
+  const c=$('pv');c.width=Math.max(1,fw);c.height=Math.max(1,fh);
+  paint(c.getContext('2d'),t.W,t.H,c.width/t.W);
+  const crop=$('fit').value==='crop';
+  $('hint').hidden=!crop;$('zoom').parentElement.hidden=!crop;$('bgl').hidden=$('fit').value!=='fit';
+  c.style.cursor=crop?'grab':'default';
+}
+['w','h','dpi','keep','fit','bg'].forEach(id=>$(id).addEventListener('input',()=>{u=id==='fit'?u:u;update()}));
+$('unit').onchange=()=>{
+  const d=Math.max(1,+$('dpi').value||72),nu=$('unit').value;
+  ['w','h'].forEach(id=>{$(id).value=nice(fromPx(toPx(+$(id).value||1,prevUnit,d),nu,d),nu)});
+  prevUnit=nu;update();
+};
+$('zoom').oninput=e=>{$('zv').textContent=e.target.value+'%';update()};
+$('q').oninput=e=>$('qv').textContent=e.target.value+'%';
+function limUI(){const l=$('lim').checked,p=$('fmt').value==='image/png';
+  $('limrow').hidden=!l;$('ql').hidden=l||p}
+$('lim').onchange=limUI;$('fmt').onchange=limUI;limUI();
+
+// drag to pan
+let drag=null;
+$('pv').addEventListener('pointerdown',e=>{if($('fit').value!=='crop')return;drag={x:e.clientX,y:e.clientY};$('pv').setPointerCapture(e.pointerId);$('pv').style.cursor='grabbing'});
+$('pv').addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const t=target(),c=$('pv'),r=c.getBoundingClientRect(),k=t.W/r.width;
+  const s=Math.max(t.W/img.naturalWidth,t.H/img.naturalHeight)*($('zoom').value/100);
+  u-=(e.clientX-drag.x)*k/(img.naturalWidth*s);v-=(e.clientY-drag.y)*k/(img.naturalHeight*s);
+  drag={x:e.clientX,y:e.clientY};update();
+});
+['pointerup','pointercancel'].forEach(ev=>$('pv').addEventListener(ev,()=>{drag=null;update()}));
+
+// metadata: DPI
+const crcT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc=b=>{let c=0xFFFFFFFF;for(const x of b)c=crcT[(c^x)&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function dpiJpeg(a,d){
+  d=Math.min(65535,Math.round(d));
+  if(a[0]!==0xFF||a[1]!==0xD8)return a;
+  if(a[2]===0xFF&&a[3]===0xE0&&a[6]===0x4A&&a[7]===0x46&&a[8]===0x49&&a[9]===0x46){
+    a[13]=1;a[14]=d>>8;a[15]=d&255;a[16]=d>>8;a[17]=d&255;return a;
+  }
+  const seg=[0xFF,0xE0,0,16,0x4A,0x46,0x49,0x46,0,1,1,1,d>>8,d&255,d>>8,d&255,0,0],o=new Uint8Array(a.length+18);
+  o.set(a.subarray(0,2));o.set(seg,2);o.set(a.subarray(2),20);return o;
+}
+function dpiPng(a,d){
+  const ppm=Math.round(d/0.0254),ch=new Uint8Array(21),dv=new DataView(ch.buffer);
+  dv.setUint32(0,9);ch.set([0x70,0x48,0x59,0x73],4);dv.setUint32(8,ppm);dv.setUint32(12,ppm);ch[16]=1;
+  dv.setUint32(17,crc(ch.subarray(4,17)));
+  const o=new Uint8Array(a.length+21);o.set(a.subarray(0,33));o.set(ch,33);o.set(a.subarray(33),54);return o;
+}
+async function encode(c,type,q,d){
+  const b=await new Promise(r=>c.toBlob(r,type,q));
+  if(!b)throw Error('Your browser cannot save this format. Try JPG.');
+  let a=new Uint8Array(await b.arrayBuffer());
+  if(type==='image/jpeg')a=dpiJpeg(a,d);else if(type==='image/png')a=dpiPng(a,d);
+  return new Blob([a],{type});
+}
+const tick=()=>new Promise(r=>setTimeout(r));
+
+$('go').onclick=async()=>{
+  if(!img)return;
+  const t=target();
+  if(t.W>MAXPX||t.H>MAXPX||t.W*t.H>100e6)return say(`That size is too large (${t.W} x ${t.H} px). Keep each side under ${MAXPX} px, or lower the DPI.`,1);
+  $('go').disabled=true;$('res').hidden=true;say('Creating your image…');await tick();
+  try{
+    const c=document.createElement('canvas');c.width=t.W;c.height=t.H;
+    const x=c.getContext('2d');paint(x,t.W,t.H,1);
+    const type=$('fmt').value,lim=$('lim').checked,max=(+$('lv').value||0)*(+$('lu').value);
+    let blob,note='';
+    if(type==='image/png'){
+      blob=await encode(c,type,1,t.d);
+      if(lim&&blob.size>max)throw Error(`PNG cannot be compressed to the limit (it is ${fmtSize(blob.size)}). Choose JPG or WebP, or use a smaller size.`);
+    }else if(!lim){
+      blob=await encode(c,type,$('q').value/100,t.d);
+    }else{
+      if(!max)throw Error('Enter the maximum file size.');
+      let best=await encode(c,type,1,t.d);
+      if(best.size>max){
+        const low=await encode(c,type,0.02,t.d);
+        if(low.size>max)throw Error(`Even at the lowest quality the file is ${fmtSize(low.size)}. Reduce the width and height, or lower the DPI, and try again.`);
+        let lo=0.02,hi=1;best=low;
+        for(let i=0;i<10;i++){
+          const mid=(lo+hi)/2;say(`Finding the best quality… (${i+1}/10)`);await tick();
+          const b=await encode(c,type,mid,t.d);
+          if(b.size<=max){best=b;lo=mid}else hi=mid;
+        }
+      }
+      blob=best;
+    }
+    if(type==='image/webp')note=' WebP files do not store a DPI value.';
+    const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[type],url=URL.createObjectURL(blob);
+    $('ri').src=url;
+    const phys=`${nice(fromPx(t.W,t.un==='px'?'cm':t.un,t.d),t.un==='px'?'cm':t.un)} x ${nice(fromPx(t.H,t.un==='px'?'cm':t.un,t.d),t.un==='px'?'cm':t.un)} ${t.un==='px'?'cm':t.un==='in'?'inch':t.un}`;
+    $('rinfo').textContent=`${t.W} x ${t.H} px · ${t.d} DPI · ${phys} · ${fmtSize(blob.size)}.${note}`;
+    const a=$('rdl');a.href=url;a.download=`${name}-${t.W}x${t.H}.${ext}`;a.textContent='Download '+ext.toUpperCase();
+    $('res').hidden=false;say('Done.');
+  }catch(e){say(e.message||'Something went wrong.',1)}
+  finally{$('go').disabled=false}
+};
+</script>
+</body>
+</html>
