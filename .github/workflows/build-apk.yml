@@ -1,0 +1,46 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Bundle web libraries for offline use
+        run: |
+          set -e
+          L=app/src/main/assets/www/libs
+          mkdir -p $L
+          C=https://cdnjs.cloudflare.com/ajax/libs
+          curl -fsSL -o $L/lame.min.js $C/lamejs/1.2.1/lame.min.js
+          curl -fsSL -o $L/pdf-lib.min.js $C/pdf-lib/1.17.1/pdf-lib.min.js
+          curl -fsSL -o $L/pdf.min.js $C/pdf.js/3.11.174/pdf.min.js
+          curl -fsSL -o $L/pdf.worker.min.js $C/pdf.js/3.11.174/pdf.worker.min.js
+          F=app/src/main/assets/www/index.html
+          sed -i "s#$C/lamejs/1.2.1/lame.min.js#libs/lame.min.js#g" $F
+          sed -i "s#$C/pdf-lib/1.17.1/pdf-lib.min.js#libs/pdf-lib.min.js#g" $F
+          sed -i "s#$C/pdf.js/3.11.174/pdf.min.js#libs/pdf.min.js#g" $F
+          sed -i "s#$C/pdf.js/3.11.174/pdf.worker.min.js#libs/pdf.worker.min.js#g" $F
+          grep -c "cdnjs.cloudflare.com" $F || true
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: T2BOX-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
