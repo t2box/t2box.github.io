@@ -635,6 +635,8 @@ canvas#h_cr:active{cursor:grabbing}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js" crossorigin="anonymous"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
+/* Android file pickers can report an empty type, so also accept files by extension */
+window.isImgFile=f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|bmp|avif|heic|heif)$/i.test(f.name)||((!f.type||f.type==='application/octet-stream')&&!/\.\w+$/.test(f.name));
 
 /* Tabs */
 (()=>{
@@ -759,7 +761,7 @@ function fmt(b){return b>1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(0
 
 function add(fl){
   for(const f of fl){
-    if(!f.type.startsWith('image/'))continue;
+    if(!isImgFile(f))continue;
     const row=document.createElement('div');row.className='item';
     const url=URL.createObjectURL(f);
     row.innerHTML='<img alt=""><div class="nm"></div>';
@@ -843,7 +845,7 @@ drop.addEventListener('drop',e=>load(e.dataTransfer.files[0]));
 fi.onchange=()=>{load(fi.files[0]);fi.value=''};
 function load(f){
   if(!f)return;
-  if(!f.type.startsWith('image/'))return say('Please choose an image file.',1);
+  if(!isImgFile(f))return say('Please choose an image file.',1);
   const im=new Image(),url=URL.createObjectURL(f);
   im.onload=()=>{img=im;name=f.name.replace(/\.[^.]+$/,'');u=v=.5;$('zoom').value=100;$('zv').textContent='100%';
     $('work').hidden=false;$('res').hidden=true;say('');update()};
@@ -1072,7 +1074,7 @@ function drawCrop(){
 }
 function add(fl){
   for(const f of fl){
-    if(!f.type.startsWith('image/'))continue;
+    if(!isImgFile(f))continue;
     const url=URL.createObjectURL(f),img=new Image();
     img.onload=()=>{
       const p={id:++uid,name:f.name,img,url,copies:6,zoom:1,cx:img.naturalWidth/2,cy:img.naturalHeight/2};
@@ -1307,7 +1309,7 @@ fi.onchange=()=>{addFiles(fi.files);fi.value=''};
 function addFiles(fl){
   const isPdf=cur.acc===PDF;
   for(const f of fl){
-    const ok=isPdf?(f.type==='application/pdf'||/\.pdf$/i.test(f.name)):f.type.startsWith('image/');
+    const ok=isPdf?(f.type==='application/pdf'||/\.pdf$/i.test(f.name)):isImgFile(f);
     if(!ok){say(`"${f.name}" was skipped because it is not a ${isPdf?'PDF':'supported image'}.`,1);continue}
     if(!cur.multi)files=[];files.push(f);
   }
