@@ -375,6 +375,7 @@ canvas#h_cr:active{cursor:grabbing}
   <small>JPG, PNG, WebP, GIF, BMP (multiple files allowed)</small>
   <input type="file" id="i_file" accept="image/*" multiple hidden>
 </div>
+<div class="msg" id="i_msg" aria-live="polite"></div>
 
 <div class="opts">
   <label>Width (px)<input type="number" id="i_w" value="3000" min="1" max="8000"></label>
@@ -628,7 +629,7 @@ canvas#h_cr:active{cursor:grabbing}
 
   <footer class="site">
     <svg class="logo" role="img" aria-label="T2BOX"><use href="#t2box-logo"/></svg>
-    <span>&copy; <span id="yr"></span> T2BOX. Your files never leave your device.</span>
+    <span>&copy; <span id="yr"></span> T2BOX · v1.5 · Your files never leave your device.</span>
   </footer>
 </div>
 
@@ -760,19 +761,25 @@ function sync(){$('go').disabled=!items.length;$('clr').disabled=!items.length}
 function fmt(b){return b>1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(0)+' KB'}
 
 function add(fl){
-  for(const f of fl){
-    if(!isImgFile(f))continue;
-    const row=document.createElement('div');row.className='item';
-    const url=URL.createObjectURL(f);
-    row.innerHTML='<img alt=""><div class="nm"></div>';
-    row.querySelector('img').src=url;
-    const nm=row.querySelector('.nm');
-    nm.textContent=f.name;
-    const st=document.createElement('span');st.className='st';st.textContent=fmt(f.size)+' · Waiting';
-    nm.appendChild(st);
-    $('list').appendChild(row);
-    items.push({f,row,url,st});
+  const skipped=[];let added=0;
+  for(const f of Array.from(fl)){
+    if(!isImgFile(f)){skipped.push(f.name+' ('+(f.type||'no type')+')');continue}
+    try{
+      const row=document.createElement('div');row.className='item';
+      const url=URL.createObjectURL(f);
+      row.innerHTML='<img alt=""><div class="nm"></div>';
+      row.querySelector('img').src=url;
+      const nm=row.querySelector('.nm');
+      nm.textContent=f.name;
+      const st=document.createElement('span');st.className='st';st.textContent=fmt(f.size)+' · Waiting';
+      nm.appendChild(st);
+      $('list').appendChild(row);
+      items.push({f,row,url,st});added++;
+    }catch(e){skipped.push(f.name+' ('+e.message+')')}
   }
+  const m=document.getElementById('i_msg');
+  m.textContent=skipped.length?'Could not add: '+skipped.join(', '):'';
+  m.classList.toggle('err',!!skipped.length);
   sync();
 }
 
@@ -1073,8 +1080,8 @@ function drawCrop(){
   $('zoom').value=Math.round(sel.zoom*100);$('zv').textContent=Math.round(sel.zoom*100)+'%';
 }
 function add(fl){
-  for(const f of fl){
-    if(!isImgFile(f))continue;
+  for(const f of Array.from(fl)){
+    if(!isImgFile(f)){say('Skipped '+f.name+' ('+(f.type||'no type')+'): not an image',true);continue}
     const url=URL.createObjectURL(f),img=new Image();
     img.onload=()=>{
       const p={id:++uid,name:f.name,img,url,copies:6,zoom:1,cx:img.naturalWidth/2,cy:img.naturalHeight/2};
@@ -1985,6 +1992,9 @@ window.addEventListener('hashchange',reshow);window.addEventListener('t2route',r
 (()=>{
   if(!window.T2BOXApp)return;
   document.documentElement.classList.add('app');
+  /* Some Android pickers fail with multi-select on image inputs; pick one photo at a time in the app */
+  ['i_file','h_file'].forEach(id=>{const el=document.getElementById(id);if(el){el.removeAttribute('multiple');const sm=el.parentElement.querySelector('small');if(sm)sm.textContent='Tap again to add more photos'}});
+  document.addEventListener('change',e=>{const t=e.target;if(t&&t.type==='file'&&t.files){T2BOXApp.toast('Picked '+t.files.length+': '+Array.from(t.files).map(f=>f.name+' ('+(f.type||'no type')+', '+Math.round(f.size/1024)+' KB)').join(', ').slice(0,150))}},true);
   let q=Promise.resolve();
   const rd=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=rej;r.readAsDataURL(b)});
   async function saveFile(href,name){
