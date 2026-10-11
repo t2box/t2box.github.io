@@ -2973,13 +2973,35 @@ let raf=0;const schedule=()=>{cancelAnimationFrame(raf);raf=requestAnimationFram
 
 /* ---- removing ---- */
 function showBar(v){const b=$('bar');b.hidden=v==null;if(v!=null)b.querySelector('i').style.width=Math.round(v*100)+'%'}
-async function ai(){
+let RM=null;
+function setMask(get){const M=ensureMask(),n=S.w*S.h;for(let i=0;i<n;i++){let v=get(i);M.auto[i]=v<6?0:v>249?255:v}M.ovr.fill(0)}
+/* Engine 1: RMBG-1.4 (high quality, same class of model used by professional tools) */
+async function aiRmbg(){
+  showBar(.05);say('Loading the AI engine…');
+  const TF=await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+  TF.env.allowLocalModels=false;
+  if(!RM){
+    const seen={},cb=p=>{if(p&&p.status==='progress'&&p.file){seen[p.file]=p.progress;const v=Object.values(seen),a=v.reduce((x,y)=>x+y,0)/v.length;showBar(Math.max(.05,a/100));say('Downloading the AI model (first time only)… '+Math.round(a)+'%')}};
+    const model=await TF.AutoModel.from_pretrained('briaai/RMBG-1.4',{config:{model_type:'custom'},progress_callback:cb});
+    const proc=await TF.AutoProcessor.from_pretrained('briaai/RMBG-1.4',{config:{do_normalize:true,do_pad:false,do_rescale:true,do_resize:true,image_mean:[.5,.5,.5],feature_extractor_type:'ImageFeatureExtractor',image_std:[1,1,1],resample:2,rescale_factor:1/255,size:{width:1024,height:1024}}});
+    RM={TF,model,proc};
+  }
+  say('Removing the background…');showBar(.92);await T.tick();
+  const blob=await new Promise(r=>S.pv.toBlob(r,'image/png')),url=URL.createObjectURL(blob);
+  try{
+    const img=await RM.TF.RawImage.fromURL(url),{pixel_values}=await RM.proc(img),{output}=await RM.model({input:pixel_values});
+    const m=await RM.TF.RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(S.w,S.h),ch=m.channels||1,d=m.data;
+    setMask(i=>d[i*ch]);S.kind='rmbg';
+  }finally{URL.revokeObjectURL(url)}
+}
+/* Engine 2: IS-Net via background-removal library */
+async function aiImgly(){
   say('Removing the background…');showBar(.05);
   const lib=await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
   const blob=await new Promise(r=>S.pv.toBlob(r,'image/png'));
   const out=await lib.removeBackground(blob,{model:'isnet_quint8',progress:(k,cur,tot)=>{if(tot){showBar(Math.max(.05,cur/tot));say(/fetch/.test(k)?'Downloading the AI model (first time only)… '+Math.round(cur/tot*100)+'%':'Removing the background…')}}});
   const bm=await createImageBitmap(out),t=document.createElement('canvas');t.width=S.w;t.height=S.h;const tx=t.getContext('2d');tx.drawImage(bm,0,0,S.w,S.h);
-  const d=tx.getImageData(0,0,S.w,S.h).data,M=ensureMask();for(let i=0;i<S.w*S.h;i++)M.auto[i]=d[i*4+3];M.ovr.fill(0);S.kind='ai';
+  const d=tx.getImageData(0,0,S.w,S.h).data;setMask(i=>d[i*4+3]);S.kind='ai';
 }
 function plain(){
   const M=ensureMask();let a=plainRaw(40);a=keepMain(a,S.w,S.h);const b=T.boxBlur(a,S.w,S.h,1,2);M.auto=Uint8Array.from(b,v=>Math.round(v));M.ovr.fill(0);S.kind='plain';
@@ -2989,8 +3011,12 @@ async function removeNow(mode){
   try{
     if(mode==='plain'){say('Removing the background…');showBar(.5);await T.tick();plain();say('Done. This mode works best on plain backgrounds. Use the brush to fix the edges.')}
     else{
-      try{await ai();say('Done. Use the brush below to fix any edges.')}
-      catch(e){showBar(.5);await T.tick();plain();say('The AI could not start (it needs internet), so the plain-background mode was used. It works best on plain backgrounds.',1)}
+      let ok=false;
+      for(const eng of [aiRmbg,aiImgly]){
+        try{await eng();ok=true;break}catch(e){console.warn('Background engine failed',e)}
+      }
+      if(ok)say('Done. Hold the button to compare, or use the brush to fix any edges.');
+      else{showBar(.5);await T.tick();plain();say('The AI could not load (it needs an internet connection the first time), so the plain-background mode was used. It works best on plain backgrounds. Check your connection and tap "Try again with AI".',1)}
     }
   }catch(e){say('Could not remove the background from this photo.',1)}
   showBar(null);S.busy=false;['again','basic'].forEach(k=>$(k).disabled=false);render();
