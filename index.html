@@ -622,10 +622,12 @@ canvas#h_cr:active{cursor:grabbing}
 <div id="bg_app" hidden>
   <div class="xcv" id="bg_view"><canvas id="bg_cv"></canvas></div>
   <div class="bar" id="bg_bar" hidden style="margin-top:10px"><i></i></div>
+  <button class="btn full" id="bg_run" type="button">Remove background</button>
   <div class="xbar">
-    <button class="btn ghost" id="bg_cmp" type="button">Hold to see original</button>
+    <button class="btn ghost" id="bg_cmp" type="button" hidden>Hold to see original</button>
     <button class="btn ghost" id="bg_change" type="button">New photo</button>
   </div>
+  <div id="bg_post" hidden>
   <div class="box">
     <h2>Background</h2>
     <div class="xseg small" id="bg_bgs">
@@ -666,6 +668,7 @@ canvas#h_cr:active{cursor:grabbing}
     </div>
     <button class="btn full" id="bg_dl" type="button">Download HD</button>
     <p class="hint" id="bg_dim"></p>
+  </div>
   </div>
 </div>
 </section>
@@ -3007,7 +3010,7 @@ function plain(){
   const M=ensureMask();let a=plainRaw(40);a=keepMain(a,S.w,S.h);const b=T.boxBlur(a,S.w,S.h,1,2);M.auto=Uint8Array.from(b,v=>Math.round(v));M.ovr.fill(0);S.kind='plain';
 }
 async function removeNow(mode){
-  if(S.busy||!S.bmp)return;S.busy=true;['again','basic'].forEach(k=>$(k).disabled=true);
+  if(S.busy||!S.bmp)return;S.busy=true;$('run').disabled=true;['again','basic'].forEach(k=>$(k).disabled=true);
   try{
     if(mode==='plain'){say('Removing the background…');showBar(.5);await T.tick();plain();say('Done. This mode works best on plain backgrounds. Use the brush to fix the edges.')}
     else{
@@ -3019,7 +3022,9 @@ async function removeNow(mode){
       else{showBar(.5);await T.tick();plain();say('The AI could not load (it needs an internet connection the first time), so the plain-background mode was used. It works best on plain backgrounds. Check your connection and tap "Try again with AI".',1)}
     }
   }catch(e){say('Could not remove the background from this photo.',1)}
-  showBar(null);S.busy=false;['again','basic'].forEach(k=>$(k).disabled=false);render();
+  showBar(null);S.busy=false;$('run').disabled=false;['again','basic'].forEach(k=>$(k).disabled=false);
+  if(S.mask){$('run').hidden=true;$('post').hidden=false;$('cmp').hidden=false}
+  render();
 }
 async function load(f){
   if(!f)return;if(!isImgFile(f)){say('Please choose a photo (JPG, PNG or WebP).',1);return}
@@ -3029,12 +3034,12 @@ async function load(f){
     if((b.width||b.naturalWidth)*(b.height||b.naturalHeight)>80e6)throw Error('That photo is too large for the browser.');
     S.bmp=b;S.name=f.name.replace(/\.[^.]+$/,'')||'photo';S.pv=T.fitCanvas(b,1600);S.w=S.pv.width;S.h=S.pv.height;
     S.pvData=S.pv.getContext('2d').getImageData(0,0,S.w,S.h);S.mask=null;S.maskCv=null;S.bg='transp';S.brush='off';syncBg();syncBrush();
-    $('drop').hidden=true;$('app').hidden=false;render();upd();
-    removeNow('ai');
+    $('drop').hidden=true;$('app').hidden=false;$('run').hidden=false;$('run').disabled=false;$('post').hidden=true;$('cmp').hidden=true;render();upd();say('Tap "Remove background" to remove it.');
   }catch(e){say(e.message==='read'?'That photo could not be read.':(e.message||'That photo could not be opened.'),1)}
 }
 T.wire($('drop'),$('file'),load);
 $('change').onclick=()=>{$('app').hidden=true;$('drop').hidden=false;S.bmp=null;S.mask=null;say('')};
+$('run').onclick=()=>removeNow('ai');
 $('again').onclick=()=>{S.mask=null;removeNow('ai')};
 $('basic').onclick=()=>{S.mask=null;removeNow('plain')};
 const cmp=$('cmp');
