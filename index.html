@@ -2983,19 +2983,23 @@ async function aiRmbg(){
   showBar(.05);say('Loading the AI engine…');
   const TF=await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
   TF.env.allowLocalModels=false;
+  try{TF.env.backends.onnx.wasm.numThreads=1;TF.env.backends.onnx.wasm.proxy=false}catch(e){}
   if(!RM){
     const seen={},cb=p=>{if(p&&p.status==='progress'&&p.file){seen[p.file]=p.progress;const v=Object.values(seen),a=v.reduce((x,y)=>x+y,0)/v.length;showBar(Math.max(.05,a/100));say('Downloading the AI model (first time only)… '+Math.round(a)+'%')}};
     const model=await TF.AutoModel.from_pretrained('briaai/RMBG-1.4',{config:{model_type:'custom'},progress_callback:cb});
+    say('Starting the AI…');showBar(.9);await T.tick();
     const proc=await TF.AutoProcessor.from_pretrained('briaai/RMBG-1.4',{config:{do_normalize:true,do_pad:false,do_rescale:true,do_resize:true,image_mean:[.5,.5,.5],feature_extractor_type:'ImageFeatureExtractor',image_std:[1,1,1],resample:2,rescale_factor:1/255,size:{width:1024,height:1024}}});
     RM={TF,model,proc};
   }
-  say('Removing the background…');showBar(.92);await T.tick();
-  const blob=await new Promise(r=>S.pv.toBlob(r,'image/png')),url=URL.createObjectURL(blob);
-  try{
-    const img=await RM.TF.RawImage.fromURL(url),{pixel_values}=await RM.proc(img),{output}=await RM.model({input:pixel_values});
-    const m=await RM.TF.RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(S.w,S.h),ch=m.channels||1,d=m.data;
-    setMask(i=>d[i*ch]);S.kind='rmbg';
-  }finally{URL.revokeObjectURL(url)}
+  say('Removing the background… (this can take up to a minute on a phone)');showBar(.93);await T.tick();
+  const blob=await new Promise(r=>S.pv.toBlob(r,'image/png'));
+  const img=await RM.TF.RawImage.fromBlob(blob);
+  const {pixel_values}=await RM.proc(img);
+  const out=await RM.model({input:pixel_values}),t=out.output||out[Object.keys(out)[0]];
+  const m=await RM.TF.RawImage.fromTensor(t[0].mul(255).to('uint8')).resize(S.w,S.h),ch=m.channels||1,d=m.data;
+  let kept=0;for(let i=0;i<S.w*S.h;i++)if(d[i*ch]>127)kept++;
+  if(kept<S.w*S.h*.002)throw Error('The AI found no object in this photo.');
+  setMask(i=>d[i*ch]);S.kind='rmbg';
 }
 /* Engine 2: IS-Net via background-removal library */
 async function aiImgly(){
@@ -3014,12 +3018,17 @@ async function removeNow(mode){
   try{
     if(mode==='plain'){say('Removing the background…');showBar(.5);await T.tick();plain();say('Done. This mode works best on plain backgrounds. Use the brush to fix the edges.')}
     else{
-      let ok=false;
+      let ok=false;const errs=[];
       for(const eng of [aiRmbg,aiImgly]){
-        try{await eng();ok=true;break}catch(e){console.warn('Background engine failed',e)}
+        try{await eng();ok=true;break}catch(e){console.warn('Background engine failed',e);errs.push((e&&e.message)||String(e))}
       }
       if(ok)say('Done. Hold the button to compare, or use the brush to fix any edges.');
-      else{showBar(.5);await T.tick();plain();say('The AI could not load (it needs an internet connection the first time), so the plain-background mode was used. It works best on plain backgrounds. Check your connection and tap "Try again with AI".',1)}
+      else{
+        showBar(.5);await T.tick();plain();
+        const M=S.mask;let rem=0;for(let i=0;i<M.auto.length;i++)if(M.auto[i]<128)rem++;
+        const pct=rem/M.auto.length;
+        say('The AI could not run ('+errs.join(' | ').slice(0,260)+'). '+(pct<.03?'Plain mode also found almost no plain background, so nothing was removed. ':'Plain-background mode was used instead, which only works on plain backgrounds. ')+'Check your internet connection, reload the page and tap "Try again with AI".',1);
+      }
     }
   }catch(e){say('Could not remove the background from this photo.',1)}
   showBar(null);S.busy=false;$('run').disabled=false;['again','basic'].forEach(k=>$(k).disabled=false);
