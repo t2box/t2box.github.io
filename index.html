@@ -761,7 +761,7 @@ canvas#h_cr:active{cursor:grabbing}
 
   <footer class="site">
     <svg class="logo" role="img" aria-label="T2BOX"><use href="#t2box-logo"/></svg>
-    <span>&copy; <span id="yr"></span> <span title="v2.0">T2BOX</span>. All rights reserved.</span>
+    <span>&copy; <span id="yr"></span> <span title="v2.1">T2BOX</span>. All rights reserved.</span>
   </footer>
 </div>
 
@@ -2910,7 +2910,7 @@ $('dl').onclick=async()=>{
 (()=>{
 const T=window.T2I,$=id=>document.getElementById('bg_'+id);
 const S={bmp:null,name:'photo',w:0,h:0,pv:null,pvData:null,mask:null,maskCv:null,bg:'transp',bgColor:'#ffffff',brush:'off',compare:false,busy:false,kind:''};
-const say=(t,err)=>{const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
+const say=(t,err)=>{S.last=Date.now();const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
 
 /* ---- plain-background algorithm ---- */
 function kmeans(pts,k){
@@ -2975,11 +2975,12 @@ function render(){
 let raf=0;const schedule=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(render)};
 
 /* ---- removing ---- */
-function showBar(v){const b=$('bar');b.hidden=v==null;if(v!=null)b.querySelector('i').style.width=Math.round(v*100)+'%'}
+function showBar(v){S.last=Date.now();const b=$('bar');b.hidden=v==null;if(v!=null)b.querySelector('i').style.width=Math.round(v*100)+'%'}
 let RM=null;
-function setMask(get){const M=ensureMask(),n=S.w*S.h;for(let i=0;i<n;i++){let v=get(i);M.auto[i]=v<6?0:v>249?255:v}M.ovr.fill(0)}
+let ACTIVE=0;
+function setMask(get,tok){if(tok!==ACTIVE)throw Error('stale');const M=ensureMask(),n=S.w*S.h;for(let i=0;i<n;i++){let v=get(i);M.auto[i]=v<6?0:v>249?255:v}M.ovr.fill(0)}
 /* Engine 1: RMBG-1.4 (high quality, same class of model used by professional tools) */
-async function aiRmbg(){
+async function aiRmbg(tok){
   showBar(.05);say('Loading the AI engine…');
   const TF=await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
   TF.env.allowLocalModels=false;
@@ -2999,16 +3000,56 @@ async function aiRmbg(){
   const m=await RM.TF.RawImage.fromTensor(t[0].mul(255).to('uint8')).resize(S.w,S.h),ch=m.channels||1,d=m.data;
   let kept=0;for(let i=0;i<S.w*S.h;i++)if(d[i*ch]>127)kept++;
   if(kept<S.w*S.h*.002)throw Error('The AI found no object in this photo.');
-  setMask(i=>d[i*ch]);S.kind='rmbg';
+  setMask(i=>d[i*ch],tok);S.kind='rmbg';
 }
-/* Engine 2: IS-Net via background-removal library */
-async function aiImgly(){
+/* Engine 2: MediaPipe selfie segmentation (small and fast, for photos of people) */
+let MP=null;
+function guided(p,r,eps){
+  const w=S.w,h=S.h,n=w*h,d=S.pvData.data,I=new Float32Array(n);
+  for(let i=0,j=0;i<n;i++,j+=4)I[i]=(.299*d[j]+.587*d[j+1]+.114*d[j+2])/255;
+  const bb=a=>T.boxBlur(a,w,h,r,1),mI=bb(I),mp=bb(p),Ip=new Float32Array(n),II=new Float32Array(n);
+  for(let i=0;i<n;i++){Ip[i]=I[i]*p[i];II[i]=I[i]*I[i]}
+  const cIp=bb(Ip),cII=bb(II),a=new Float32Array(n),b=new Float32Array(n);
+  for(let i=0;i<n;i++){const v=cII[i]-mI[i]*mI[i],c=cIp[i]-mI[i]*mp[i];a[i]=c/(v+eps);b[i]=mp[i]-a[i]*mI[i]}
+  const ma=bb(a),mb=bb(b),q=new Float32Array(n);
+  for(let i=0;i<n;i++)q[i]=T.clamp(ma[i]*I[i]+mb[i],0,1);
+  return q;
+}
+async function aiMediaPipe(tok){
+  showBar(.1);say('Loading the portrait AI…');
+  const V='0.10.14',lib=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@'+V+'/+esm');
+  if(!MP){
+    const fs=await lib.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@'+V+'/wasm');
+    showBar(.4);say('Downloading the portrait AI…');
+    MP=await lib.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite'},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
+  }
+  say('Removing the background…');showBar(.8);await T.tick();
+  const res=MP.segment(S.pv),masks=res.confidenceMasks||[];
+  if(!masks.length)throw Error('the portrait AI returned no mask');
+  let best=null,bs=-9;
+  for(const m of masks){
+    const arr=m.getAsFloat32Array(),mw=m.width,mh=m.height;let c=0,cn=0,e=0,en=0;
+    for(let y=0;y<mh;y+=2)for(let x=0;x<mw;x+=2){const v=arr[y*mw+x],inC=x>mw*.3&&x<mw*.7&&y>mh*.3&&y<mh*.7;if(inC){c+=v;cn++}else if(x<mw*.12||x>mw*.88||y<mh*.12){e+=v;en++}}
+    const sc=c/Math.max(1,cn)-e/Math.max(1,en);if(sc>bs){bs=sc;best={arr:Float32Array.from(arr),mw,mh}}
+  }
+  try{res.close&&res.close()}catch(e){}
+  const sc=document.createElement('canvas');sc.width=best.mw;sc.height=best.mh;const sx=sc.getContext('2d'),sid=sx.createImageData(best.mw,best.mh);
+  for(let i=0;i<best.mw*best.mh;i++){sid.data[i*4+3]=Math.round(T.clamp(best.arr[i],0,1)*255)}sx.putImageData(sid,0,0);
+  const up=document.createElement('canvas');up.width=S.w;up.height=S.h;const ux=up.getContext('2d');ux.imageSmoothingQuality='high';ux.drawImage(sc,0,0,S.w,S.h);
+  const ad=ux.getImageData(0,0,S.w,S.h).data,n=S.w*S.h,p=new Float32Array(n);let kept=0;
+  for(let i=0;i<n;i++){p[i]=ad[i*4+3]/255;if(p[i]>.5)kept++}
+  if(kept<n*.03||kept>n*.985)throw Error('no person found in this photo');
+  const q=guided(p,Math.max(4,Math.round(Math.min(S.w,S.h)*.012)),1e-3);
+  setMask(i=>q[i]*255,tok);S.kind='portrait';
+}
+/* Engine 3: IS-Net via background-removal library */
+async function aiImgly(tok){
   say('Removing the background…');showBar(.05);
   const lib=await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
   const blob=await new Promise(r=>S.pv.toBlob(r,'image/png'));
   const out=await lib.removeBackground(blob,{model:'isnet_quint8',progress:(k,cur,tot)=>{if(tot){showBar(Math.max(.05,cur/tot));say(/fetch/.test(k)?'Downloading the AI model (first time only)… '+Math.round(cur/tot*100)+'%':'Removing the background…')}}});
   const bm=await createImageBitmap(out),t=document.createElement('canvas');t.width=S.w;t.height=S.h;const tx=t.getContext('2d');tx.drawImage(bm,0,0,S.w,S.h);
-  const d=tx.getImageData(0,0,S.w,S.h).data;setMask(i=>d[i*4+3]);S.kind='ai';
+  const d=tx.getImageData(0,0,S.w,S.h).data;setMask(i=>d[i*4+3],tok);S.kind='ai';
 }
 function plain(){
   const M=ensureMask();let a=plainRaw(40);a=keepMain(a,S.w,S.h);const b=T.boxBlur(a,S.w,S.h,1,2);M.auto=Uint8Array.from(b,v=>Math.round(v));M.ovr.fill(0);S.kind='plain';
@@ -3018,16 +3059,24 @@ async function removeNow(mode){
   try{
     if(mode==='plain'){say('Removing the background…');showBar(.5);await T.tick();plain();say('Done. This mode works best on plain backgrounds. Use the brush to fix the edges.')}
     else{
-      let ok=false;const errs=[];
-      for(const eng of [aiRmbg,aiImgly]){
-        try{await eng();ok=true;break}catch(e){console.warn('Background engine failed',e);errs.push((e&&e.message)||String(e))}
+      let ok=false;const errs=[],limit=window.__bgStall||150000;
+      for(const [name,eng] of [['RMBG',aiRmbg],['portrait',aiMediaPipe],['IS-Net',aiImgly]]){
+        const tok=++ACTIVE;
+        try{
+          await new Promise((res,rej)=>{
+            S.last=Date.now();let done=false;
+            const iv=setInterval(()=>{if(!done&&Date.now()-S.last>limit){done=true;clearInterval(iv);rej(Error('no progress for '+Math.round(limit/1000)+' s'))}},500);
+            eng(tok).then(()=>{if(!done){done=true;clearInterval(iv);res()}},e=>{if(!done){done=true;clearInterval(iv);rej(e)}});
+          });
+          ok=true;console.info('Background engine used: '+name);break;
+        }catch(e){ACTIVE++;console.warn('Background engine failed',name,e);errs.push(name+': '+((e&&e.message)||String(e)))}
       }
       if(ok)say('Done. Hold the button to compare, or use the brush to fix any edges.');
       else{
         showBar(.5);await T.tick();plain();
         const M=S.mask;let rem=0;for(let i=0;i<M.auto.length;i++)if(M.auto[i]<128)rem++;
         const pct=rem/M.auto.length;
-        say('The AI could not run ('+errs.join(' | ').slice(0,260)+'). '+(pct<.03?'Plain mode also found almost no plain background, so nothing was removed. ':'Plain-background mode was used instead, which only works on plain backgrounds. ')+'Check your internet connection, reload the page and tap "Try again with AI".',1);
+        say('The AI could not run ('+errs.join(' | ').slice(0,420)+'). '+(pct<.03?'Plain mode also found almost no plain background, so nothing was removed. ':'Plain-background mode was used instead, which only works on plain backgrounds. ')+'Check your internet connection, reload the page and tap "Try again with AI".',1);
       }
     }
   }catch(e){say('Could not remove the background from this photo.',1)}
