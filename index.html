@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T2BOX – MP3 Convert, Image Tools, Card Print, Remove Background and PDF Tools</title>
-<meta name="description" content="T2BOX: free online tools to convert MP3 audio, resize images, print passport photos and PVC or PAN cards on A4, remove photo backgrounds, and merge, edit or unlock PDF files. Runs in your browser, no signup.">
+<title>T2BOX – MP3 Convert, Image Tools, Card Print, File Transfer and PDF Tools</title>
+<meta name="description" content="T2BOX: free online tools to convert MP3 audio, resize images, print passport photos and PVC or PAN cards on A4, send files between your computer and phone, and merge, edit or unlock PDF files. Runs in your browser, no signup.">
 <meta name="theme-color" content="#020a0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -216,6 +216,23 @@ canvas#s_pv{max-width:100%;touch-action:none;cursor:grab;box-shadow:0 0 0 2px va
 .xrow .btn{margin:0;flex:1;min-width:140px}
 .xs{margin-top:12px}
 .xs:first-child{margin-top:0}
+
+/* file transfer */
+.tfgrid{display:grid;gap:16px}
+@media(min-width:800px){.tfgrid{grid-template-columns:1fr 1fr;align-items:start}}
+.tfcode{font-family:var(--head);font-size:2.1rem;letter-spacing:.22em;text-align:center;color:var(--teal);margin:14px 0 8px;word-break:break-all}
+.tfqr{display:flex;justify-content:center;margin:6px 0 10px}
+.tfqr canvas{width:200px;max-width:100%;height:auto;background:#fff;border-radius:12px}
+.tfbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.tfbar b{flex:1}
+.tfbar .btn{margin:0;padding:8px 16px}
+.tfdot{width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px 2px rgba(31,229,210,.7)}
+.tfdot.off{background:#ff948b;box-shadow:0 0 10px 2px rgba(255,148,139,.6)}
+textarea{width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--ink);font:inherit;resize:vertical}
+.tfrow .dirb{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(31,229,210,.1);color:var(--teal);font-weight:700}
+.tfrow .txt{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.tfrow .txt a{color:var(--teal)}
+.tfrow button.cp{background:none;border:1px solid var(--line2);border-radius:8px;color:var(--teal);padding:6px 12px;font:inherit;cursor:pointer}
 /* glowing floor under the workspace, echoing the logo's reflection */
 .horizon{position:relative;height:2px;width:min(94%,860px);margin:26px auto 0;background:linear-gradient(90deg,transparent,var(--teal),transparent);box-shadow:0 0 26px 4px rgba(31,229,210,.5);overflow:hidden}
 .horizon::after{content:"";position:absolute;top:-2px;left:0;width:22%;height:6px;background:linear-gradient(90deg,transparent,#fff,transparent);filter:blur(2px);transform:translateX(-120%);animation:sweep 2.4s .4s ease-out 1 forwards}
@@ -349,9 +366,9 @@ select{min-width:0;max-width:100%}
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8" cy="11" r="2"/><path d="M5.5 16c.5-1.6 1.6-2.4 2.5-2.4s2 .8 2.5 2.4M13.5 9.5h5M13.5 12.5h5M13.5 15.5h3"/></svg></span>
         <span><b>PVC Card Print</b><small>PAN, ID: front and back on A4</small></span>
       </button>
-      <button class="tab" role="tab" id="tab-removebg" aria-controls="p-removebg" aria-selected="false">
-        <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7.5" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 4h4v4M20 16v4h-4" stroke-dasharray="2 2.4"/></svg></span>
-        <span><b>Remove Background</b><small>1 click, HD download</small></span>
+      <button class="tab" role="tab" id="tab-transfer" aria-controls="p-transfer" aria-selected="false">
+        <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 16.5h5M8.5 13v3.5"/><rect x="16" y="8" width="5.5" height="11" rx="1.5"/><path d="M13.5 9.5l2-2-2-2M15.5 7.5h-4"/></svg></span>
+        <span><b>File Transfer</b><small>Computer to phone, any file</small></span>
       </button>
       <button class="tab" role="tab" id="tab-pdf" aria-controls="p-pdf" aria-selected="false">
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
@@ -652,62 +669,41 @@ select{min-width:0;max-width:100%}
  </div>
 </div>
 </section>
-<section class="panel" id="p-removebg" role="tabpanel" aria-labelledby="tab-removebg" hidden>
-<div class="drop" id="bg_drop" tabindex="0" role="button" aria-label="Choose a photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg><b>Choose a photo</b><small>The background is removed automatically</small><input type="file" id="bg_file" accept="image/*" hidden></div>
-<div class="msg" id="bg_msg" aria-live="polite"></div>
-<div id="bg_app" hidden>
-  <div class="xcv" id="bg_view"><canvas id="bg_cv"></canvas></div>
-  <div class="bar" id="bg_bar" hidden style="margin-top:10px"><i></i></div>
-  <button class="btn full" id="bg_run" type="button">Remove background</button>
-  <div class="xbar">
-    <button class="btn ghost" id="bg_cmp" type="button" hidden>Hold to see original</button>
-    <button class="btn ghost" id="bg_change" type="button">New photo</button>
-  </div>
-  <div id="bg_post" hidden>
-  <div class="box">
-    <h2>Background</h2>
-    <div class="xseg small" id="bg_bgs">
-      <button type="button" data-c="transp" class="on">Transparent</button>
-      <button type="button" data-c="#ffffff">White</button>
-      <button type="button" data-c="#3f7fd6">Blue</button>
-      <button type="button" data-c="#d63a3a">Red</button>
-      <button type="button" data-c="custom">Custom</button>
+<section class="panel" id="p-transfer" role="tabpanel" aria-labelledby="tab-transfer" hidden>
+<div id="tf_start">
+  <div class="tfgrid">
+    <div class="box">
+      <h2>Create a code</h2>
+      <p class="hint">Tap the button, then type the code (or scan the QR code) on your other device.</p>
+      <button class="btn full" id="tf_create" type="button">Create code</button>
+      <div id="tf_codebox" hidden>
+        <div class="tfcode" id="tf_code">------</div>
+        <div class="tfqr"><canvas id="tf_qr" width="10" height="10"></canvas></div>
+        <p class="hint" id="tf_wait">Waiting for the other device…</p>
+        <div class="xrow"><button class="btn ghost" id="tf_copylink" type="button">Copy link</button><button class="btn ghost" id="tf_cancel" type="button">Cancel</button></div>
+      </div>
     </div>
-    <label id="bg_cwrap" hidden>Pick a colour<input type="color" id="bg_ccol" value="#ffffff"></label>
-  </div>
-  <div class="box">
-    <h2>Fix the edges</h2>
-    <label class="chk"><input type="checkbox" id="bg_person" checked> Keep only the person (remove other objects)</label>
-    <div class="xseg small" id="bg_brush">
-      <button type="button" data-b="off" class="on">Off</button>
-      <button type="button" data-b="erase">Erase</button>
-      <button type="button" data-b="restore">Restore</button>
-    </div>
-    <div class="two">
-      <label>Brush size <span id="bg_bsv">28</span><input type="range" id="bg_bs" min="6" max="90" value="28"></label>
-      <label>Zoom
-        <select id="bg_zoom"><option value="1">1×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option></select>
+    <div class="box">
+      <h2>Enter a code</h2>
+      <label>Code from your other device
+        <input type="text" id="tf_in" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="For example K7M2QX">
       </label>
-    </div>
-    <div class="xrow" style="margin-top:12px">
-      <button class="btn ghost" id="bg_again" type="button">Try again with AI</button>
-      <button class="btn ghost" id="bg_basic" type="button">Plain background mode</button>
+      <button class="btn full" id="tf_join" type="button">Connect</button>
+      <p class="hint" id="tf_jmsg"></p>
     </div>
   </div>
-  <div class="box">
-    <div class="two">
-      <label>Size
-        <select id="bg_size"><option value="orig">Original size</option><option value="1920">HD (1920 px)</option><option value="2560">2K (2560 px)</option><option value="3840">4K (3840 px)</option></select>
-      </label>
-      <label>Format
-        <select id="bg_fmt"><option value="png">PNG (transparent)</option><option value="jpg">JPG</option><option value="webp">WebP</option></select>
-      </label>
-    </div>
-    <button class="btn full" id="bg_dl" type="button">Download HD</button>
-    <p class="hint" id="bg_dim"></p>
-  </div>
-  </div>
+  <p class="hint">1. Open T2BOX on both devices. 2. On one device tap Create code. 3. On the other device type the code or scan the QR code. Then send any files in either direction. Your files go straight from one device to the other. A free public relay (ntfy.sh) is only used to connect the two devices.</p>
 </div>
+<div id="tf_live" hidden>
+  <div class="tfbar"><span class="tfdot"></span><b id="tf_state">Connected</b><button class="btn ghost" id="tf_off" type="button">Disconnect</button></div>
+  <div class="drop" id="tf_drop" tabindex="0" role="button" aria-label="Choose files to send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg><b>Choose files to send</b><small>Any file type. Drop files here or tap to choose.</small><input type="file" id="tf_file" multiple hidden></div>
+  <div class="box" style="margin-top:14px">
+    <label>Send a message or link<textarea id="tf_txt" rows="2" placeholder="Type or paste here"></textarea></label>
+    <button class="btn" id="tf_sendtxt" type="button" style="margin-top:10px">Send message</button>
+  </div>
+  <div id="tf_list" aria-live="polite"></div>
+</div>
+<div class="msg" id="tf_msg" aria-live="polite"></div>
 </section>
 <section class="panel" id="p-pdf" role="tabpanel" aria-labelledby="tab-pdf" hidden>
 <div id="p_home">
@@ -798,7 +794,7 @@ select{min-width:0;max-width:100%}
 
   <footer class="site">
     <svg class="logo" role="img" aria-label="T2BOX"><use href="#t2box-logo"/></svg>
-    <span>&copy; <span id="yr"></span> <span title="v2.3">T2BOX</span>. All rights reserved.</span>
+    <span>&copy; <span id="yr"></span> <span title="v2.4">T2BOX</span>. All rights reserved.</span>
   </footer>
 </div>
 
@@ -810,15 +806,16 @@ window.isImgFile=f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|bmp|avif|hei
 
 /* Tabs */
 (()=>{
-const names=['audio','image','size','photo','cardprint','removebg','pdf'];
-const fromHash=()=>location.hash.startsWith('#pdf')?'pdf':(names.includes(location.hash.slice(1))?location.hash.slice(1):'audio');
+const jm=/^#transfer=([A-Za-z0-9]{6})$/.exec(location.hash);if(jm)window.__t2join=jm[1].toUpperCase();
+const names=['audio','image','size','photo','cardprint','transfer','pdf'];
+const fromHash=()=>{const h=location.hash.slice(1).split('=')[0];return h.startsWith('pdf')?'pdf':(names.includes(h)?h:'audio')};
 const INFO={
   audio:['MP3 Converter','Convert audio files to MP3. Change the bitrate, sample rate and volume, or trim your audio before you save it.'],
   image:['Image Resize 3000 × 3000','Resize photos to 3000 × 3000 pixels, or to any size you choose, and save them as JPG, PNG or WebP.'],
   size:['Image Size, DPI and File Size','Crop and resize a photo to an exact size in cm, mm, inch or pixels, set the DPI, and reduce the file to the KB or MB limit you need.'],
   photo:['Passport Photo Print','Place passport, visa or ID photos on an A4 sheet, ready to print or save as PDF.'],
   cardprint:['PVC / PAN Card Print','Print the front and back of a PVC card, PAN card or ID card on A4 paper. Print one side or both sides.'],
-  removebg:['Remove Background','Remove the background from any photo in one click and download it in HD as a transparent PNG.'],
+  transfer:['File Transfer','Send any file between your computer and your phone directly. Open this page on both devices and connect with a code.'],
   pdf:['PDF Tools','Edit, merge, split, rotate, unlock and convert PDF files for free, right in your browser.']
 };
 function setHero(n){const i=INFO[n]||INFO.audio;document.getElementById('heroT').textContent=i[0];document.getElementById('heroP').textContent=i[1]}
@@ -2760,24 +2757,6 @@ window.addEventListener('hashchange',reshow);window.addEventListener('t2route',r
 window.T2I=(()=>{
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const tick=()=>new Promise(r=>setTimeout(r,30));
-function boxBlur(src,w,h,r,passes){
-  let a=Float32Array.from(src),b=new Float32Array(src.length);const k=1/(2*r+1);
-  for(let p=0;p<passes;p++){
-    for(let y=0;y<h;y++){const o=y*w;let sum=0;for(let x=-r;x<=r;x++)sum+=a[o+Math.min(w-1,Math.max(0,x))];for(let x=0;x<w;x++){b[o+x]=sum*k;sum+=a[o+Math.min(w-1,x+r+1)]-a[o+Math.max(0,x-r)]}}
-    for(let x=0;x<w;x++){let sum=0;for(let y=-r;y<=r;y++)sum+=b[Math.min(h-1,Math.max(0,y))*w+x];for(let y=0;y<h;y++){a[y*w+x]=sum*k;sum+=b[Math.min(h-1,y+r+1)*w+x]-b[Math.max(0,y-r)*w+x]}}
-  }
-  return a;
-}
-function scaleTo(src,w,h){
-  let cw=src.width||src.naturalWidth,ch=src.height||src.naturalHeight,cur=document.createElement('canvas');
-  cur.width=cw;cur.height=ch;cur.getContext('2d').drawImage(src,0,0);
-  while(cw<w||ch<h){
-    const nw=Math.min(w,Math.round(cw*1.5)),nh=Math.min(h,Math.round(ch*1.5)),n=document.createElement('canvas');n.width=nw;n.height=nh;
-    const x=n.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,nw,nh);cur=n;cw=nw;ch=nh;
-  }
-  if(cw!==w||ch!==h){const n=document.createElement('canvas');n.width=w;n.height=h;const x=n.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,w,h);cur=n}
-  return cur;
-}
 function fitCanvas(b,maxSide){
   const W=b.width||b.naturalWidth,H=b.height||b.naturalHeight,sc=Math.min(1,maxSide/Math.max(W,H)),c=document.createElement('canvas');
   c.width=Math.max(1,Math.round(W*sc));c.height=Math.max(1,Math.round(H*sc));const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(b,0,0,c.width,c.height);return c;
@@ -2795,7 +2774,7 @@ function wire(drop,input,onFile){
   drop.addEventListener('drop',e=>onFile(e.dataTransfer.files[0]));
   input.onchange=()=>{onFile(input.files[0]);input.value=''};
 }
-return{clamp,tick,boxBlur,scaleTo,fitCanvas,readFile,save,wire};
+return{clamp,tick,fitCanvas,readFile,save,wire};
 })();
 </script>
 <script>
@@ -2932,298 +2911,203 @@ update();
 })();
 </script>
 <script>
-/* Remove Background: one click, AI first (needs internet), plain-background mode as a fallback */
+/* QR code encoder: QRCode for JavaScript, (c) 2009 Kazuhiko Arase, MIT licence */
+(()=>{var E=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports);var N=E((E1,G)=>{G.exports={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8}});var X=E((m1,U)=>{var s1=N();function K(t){this.mode=s1.MODE_8BIT_BYTE,this.data=t}K.prototype={getLength:function(){return this.data.length},write:function(t){for(var e=0;e<this.data.length;e++)t.put(this.data.charCodeAt(e),8)}};U.exports=K});var I=E((T1,Y)=>{var v={glog:function(t){if(t<1)throw new Error("glog("+t+")");return v.LOG_TABLE[t]},gexp:function(t){for(;t<0;)t+=255;for(;t>=256;)t-=255;return v.EXP_TABLE[t]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)};for(h=0;h<8;h++)v.EXP_TABLE[h]=1<<h;var h;for(h=8;h<256;h++)v.EXP_TABLE[h]=v.EXP_TABLE[h-4]^v.EXP_TABLE[h-5]^v.EXP_TABLE[h-6]^v.EXP_TABLE[h-8];var h;for(h=0;h<255;h++)v.LOG_TABLE[v.EXP_TABLE[h]]=h;var h;Y.exports=v});var b=E((d1,J)=>{var A=I();function _(t,e){if(t.length===void 0)throw new Error(t.length+"/"+e);for(var i=0;i<t.length&&t[i]===0;)i++;this.num=new Array(t.length-i+e);for(var r=0;r<t.length-i;r++)this.num[r]=t[r+i]}_.prototype={get:function(t){return this.num[t]},getLength:function(){return this.num.length},multiply:function(t){for(var e=new Array(this.getLength()+t.getLength()-1),i=0;i<this.getLength();i++)for(var r=0;r<t.getLength();r++)e[i+r]^=A.gexp(A.glog(this.get(i))+A.glog(t.get(r)));return new _(e,0)},mod:function(t){if(this.getLength()-t.getLength()<0)return this;for(var e=A.glog(this.get(0))-A.glog(t.get(0)),i=new Array(this.getLength()),r=0;r<this.getLength();r++)i[r]=this.get(r);for(var n=0;n<t.getLength();n++)i[n]^=A.gexp(A.glog(t.get(n))+e);return new _(i,0).mod(t)}};J.exports=_});var F=E((B1,x)=>{x.exports={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7}});var Z=E((L1,W)=>{var g=N(),V=b(),u1=I(),d=F(),f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(t){for(var e=t<<10;f.getBCHDigit(e)-f.getBCHDigit(f.G15)>=0;)e^=f.G15<<f.getBCHDigit(e)-f.getBCHDigit(f.G15);return(t<<10|e)^f.G15_MASK},getBCHTypeNumber:function(t){for(var e=t<<12;f.getBCHDigit(e)-f.getBCHDigit(f.G18)>=0;)e^=f.G18<<f.getBCHDigit(e)-f.getBCHDigit(f.G18);return t<<12|e},getBCHDigit:function(t){for(var e=0;t!==0;)e++,t>>>=1;return e},getPatternPosition:function(t){return f.PATTERN_POSITION_TABLE[t-1]},getMask:function(t,e,i){switch(t){case d.PATTERN000:return(e+i)%2===0;case d.PATTERN001:return e%2===0;case d.PATTERN010:return i%3===0;case d.PATTERN011:return(e+i)%3===0;case d.PATTERN100:return(Math.floor(e/2)+Math.floor(i/3))%2===0;case d.PATTERN101:return e*i%2+e*i%3===0;case d.PATTERN110:return(e*i%2+e*i%3)%2===0;case d.PATTERN111:return(e*i%3+(e+i)%2)%2===0;default:throw new Error("bad maskPattern:"+t)}},getErrorCorrectPolynomial:function(t){for(var e=new V([1],0),i=0;i<t;i++)e=e.multiply(new V([1,u1.gexp(i)],0));return e},getLengthInBits:function(t,e){if(1<=e&&e<10)switch(t){case g.MODE_NUMBER:return 10;case g.MODE_ALPHA_NUM:return 9;case g.MODE_8BIT_BYTE:return 8;case g.MODE_KANJI:return 8;default:throw new Error("mode:"+t)}else if(e<27)switch(t){case g.MODE_NUMBER:return 12;case g.MODE_ALPHA_NUM:return 11;case g.MODE_8BIT_BYTE:return 16;case g.MODE_KANJI:return 10;default:throw new Error("mode:"+t)}else if(e<41)switch(t){case g.MODE_NUMBER:return 14;case g.MODE_ALPHA_NUM:return 13;case g.MODE_8BIT_BYTE:return 16;case g.MODE_KANJI:return 12;default:throw new Error("mode:"+t)}else throw new Error("type:"+e)},getLostPoint:function(t){var e=t.getModuleCount(),i=0,r=0,n=0;for(r=0;r<e;r++)for(n=0;n<e;n++){for(var a=0,o=t.isDark(r,n),s=-1;s<=1;s++)if(!(r+s<0||e<=r+s))for(var u=-1;u<=1;u++)n+u<0||e<=n+u||s===0&&u===0||o===t.isDark(r+s,n+u)&&a++;a>5&&(i+=3+a-5)}for(r=0;r<e-1;r++)for(n=0;n<e-1;n++){var l=0;t.isDark(r,n)&&l++,t.isDark(r+1,n)&&l++,t.isDark(r,n+1)&&l++,t.isDark(r+1,n+1)&&l++,(l===0||l===4)&&(i+=3)}for(r=0;r<e;r++)for(n=0;n<e-6;n++)t.isDark(r,n)&&!t.isDark(r,n+1)&&t.isDark(r,n+2)&&t.isDark(r,n+3)&&t.isDark(r,n+4)&&!t.isDark(r,n+5)&&t.isDark(r,n+6)&&(i+=40);for(n=0;n<e;n++)for(r=0;r<e-6;r++)t.isDark(r,n)&&!t.isDark(r+1,n)&&t.isDark(r+2,n)&&t.isDark(r+3,n)&&t.isDark(r+4,n)&&!t.isDark(r+5,n)&&t.isDark(r+6,n)&&(i+=40);var L=0;for(n=0;n<e;n++)for(r=0;r<e;r++)t.isDark(r,n)&&L++;var p=Math.abs(100*L/e/e-50)/5;return i+=p*10,i}};W.exports=f});var O=E((A1,$)=>{$.exports={L:1,M:0,Q:3,H:2}});var q=E((p1,z)=>{var w=O();function m(t,e){this.totalCount=t,this.dataCount=e}m.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]];m.getRSBlocks=function(t,e){var i=m.getRsBlockTable(t,e);if(i===void 0)throw new Error("bad rs block @ typeNumber:"+t+"/errorCorrectLevel:"+e);for(var r=i.length/3,n=[],a=0;a<r;a++)for(var o=i[a*3+0],s=i[a*3+1],u=i[a*3+2],l=0;l<o;l++)n.push(new m(s,u));return n};m.getRsBlockTable=function(t,e){switch(e){case w.L:return m.RS_BLOCK_TABLE[(t-1)*4+0];case w.M:return m.RS_BLOCK_TABLE[(t-1)*4+1];case w.Q:return m.RS_BLOCK_TABLE[(t-1)*4+2];case w.H:return m.RS_BLOCK_TABLE[(t-1)*4+3];default:return}};z.exports=m});var e1=E((P1,t1)=>{function j(){this.buffer=[],this.length=0}j.prototype={get:function(t){var e=Math.floor(t/8);return(this.buffer[e]>>>7-t%8&1)==1},put:function(t,e){for(var i=0;i<e;i++)this.putBit((t>>>e-i-1&1)==1)},getLengthInBits:function(){return this.length},putBit:function(t){var e=Math.floor(this.length/8);this.buffer.length<=e&&this.buffer.push(0),t&&(this.buffer[e]|=128>>>this.length%8),this.length++}};t1.exports=j});var a1=E((D1,i1)=>{var h1=X(),B=Z(),f1=b(),r1=q(),n1=e1();function T(t,e){this.typeNumber=t,this.errorCorrectLevel=e,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}T.prototype={addData:function(t){var e=new h1(t);this.dataList.push(e),this.dataCache=null},isDark:function(t,e){if(t<0||this.moduleCount<=t||e<0||this.moduleCount<=e)throw new Error(t+","+e);return this.modules[t][e]},getModuleCount:function(){return this.moduleCount},make:function(){if(this.typeNumber<1){var t=1;for(t=1;t<40;t++){for(var e=r1.getRSBlocks(t,this.errorCorrectLevel),i=new n1,r=0,n=0;n<e.length;n++)r+=e[n].dataCount;for(var a=0;a<this.dataList.length;a++){var o=this.dataList[a];i.put(o.mode,4),i.put(o.getLength(),B.getLengthInBits(o.mode,t)),o.write(i)}if(i.getLengthInBits()<=r*8)break}this.typeNumber=t}this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(t,e){this.moduleCount=this.typeNumber*4+17,this.modules=new Array(this.moduleCount);for(var i=0;i<this.moduleCount;i++){this.modules[i]=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++)this.modules[i][r]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(t,e),this.typeNumber>=7&&this.setupTypeNumber(t),this.dataCache===null&&(this.dataCache=T.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,e)},setupPositionProbePattern:function(t,e){for(var i=-1;i<=7;i++)if(!(t+i<=-1||this.moduleCount<=t+i))for(var r=-1;r<=7;r++)e+r<=-1||this.moduleCount<=e+r||(0<=i&&i<=6&&(r===0||r===6)||0<=r&&r<=6&&(i===0||i===6)||2<=i&&i<=4&&2<=r&&r<=4?this.modules[t+i][e+r]=!0:this.modules[t+i][e+r]=!1)},getBestMaskPattern:function(){for(var t=0,e=0,i=0;i<8;i++){this.makeImpl(!0,i);var r=B.getLostPoint(this);(i===0||t>r)&&(t=r,e=i)}return e},createMovieClip:function(t,e,i){var r=t.createEmptyMovieClip(e,i),n=1;this.make();for(var a=0;a<this.modules.length;a++)for(var o=a*n,s=0;s<this.modules[a].length;s++){var u=s*n,l=this.modules[a][s];l&&(r.beginFill(0,100),r.moveTo(u,o),r.lineTo(u+n,o),r.lineTo(u+n,o+n),r.lineTo(u,o+n),r.endFill())}return r},setupTimingPattern:function(){for(var t=8;t<this.moduleCount-8;t++)this.modules[t][6]===null&&(this.modules[t][6]=t%2===0);for(var e=8;e<this.moduleCount-8;e++)this.modules[6][e]===null&&(this.modules[6][e]=e%2===0)},setupPositionAdjustPattern:function(){for(var t=B.getPatternPosition(this.typeNumber),e=0;e<t.length;e++)for(var i=0;i<t.length;i++){var r=t[e],n=t[i];if(this.modules[r][n]===null)for(var a=-2;a<=2;a++)for(var o=-2;o<=2;o++)Math.abs(a)===2||Math.abs(o)===2||a===0&&o===0?this.modules[r+a][n+o]=!0:this.modules[r+a][n+o]=!1}},setupTypeNumber:function(t){for(var e=B.getBCHTypeNumber(this.typeNumber),i,r=0;r<18;r++)i=!t&&(e>>r&1)===1,this.modules[Math.floor(r/3)][r%3+this.moduleCount-8-3]=i;for(var n=0;n<18;n++)i=!t&&(e>>n&1)===1,this.modules[n%3+this.moduleCount-8-3][Math.floor(n/3)]=i},setupTypeInfo:function(t,e){for(var i=this.errorCorrectLevel<<3|e,r=B.getBCHTypeInfo(i),n,a=0;a<15;a++)n=!t&&(r>>a&1)===1,a<6?this.modules[a][8]=n:a<8?this.modules[a+1][8]=n:this.modules[this.moduleCount-15+a][8]=n;for(var o=0;o<15;o++)n=!t&&(r>>o&1)===1,o<8?this.modules[8][this.moduleCount-o-1]=n:o<9?this.modules[8][15-o-1+1]=n:this.modules[8][15-o-1]=n;this.modules[this.moduleCount-8][8]=!t},mapData:function(t,e){for(var i=-1,r=this.moduleCount-1,n=7,a=0,o=this.moduleCount-1;o>0;o-=2)for(o===6&&o--;;){for(var s=0;s<2;s++)if(this.modules[r][o-s]===null){var u=!1;a<t.length&&(u=(t[a]>>>n&1)===1);var l=B.getMask(e,r,o-s);l&&(u=!u),this.modules[r][o-s]=u,n--,n===-1&&(a++,n=7)}if(r+=i,r<0||this.moduleCount<=r){r-=i,i=-i;break}}}};T.PAD0=236;T.PAD1=17;T.createData=function(t,e,i){for(var r=r1.getRSBlocks(t,e),n=new n1,a=0;a<i.length;a++){var o=i[a];n.put(o.mode,4),n.put(o.getLength(),B.getLengthInBits(o.mode,t)),o.write(n)}for(var s=0,u=0;u<r.length;u++)s+=r[u].dataCount;if(n.getLengthInBits()>s*8)throw new Error("code length overflow. ("+n.getLengthInBits()+">"+s*8+")");for(n.getLengthInBits()+4<=s*8&&n.put(0,4);n.getLengthInBits()%8!==0;)n.putBit(!1);for(;!(n.getLengthInBits()>=s*8||(n.put(T.PAD0,8),n.getLengthInBits()>=s*8));)n.put(T.PAD1,8);return T.createBytes(n,r)};T.createBytes=function(t,e){for(var i=0,r=0,n=0,a=new Array(e.length),o=new Array(e.length),s=0;s<e.length;s++){var u=e[s].dataCount,l=e[s].totalCount-u;r=Math.max(r,u),n=Math.max(n,l),a[s]=new Array(u);for(var L=0;L<a[s].length;L++)a[s][L]=255&t.buffer[L+i];i+=u;var p=B.getErrorCorrectPolynomial(l),o1=new f1(a[s],p.getLength()-1),y=o1.mod(p);o[s]=new Array(p.getLength()-1);for(var P=0;P<o[s].length;P++){var Q=P+y.getLength()-o[s].length;o[s][P]=Q>=0?y.get(Q):0}}for(var H=0,C=0;C<e.length;C++)H+=e[C].totalCount;for(var k=new Array(H),S=0,D=0;D<r;D++)for(var c=0;c<e.length;c++)D<a[c].length&&(k[S++]=a[c][D]);for(var M=0;M<n;M++)for(var R=0;R<e.length;R++)M<o[R].length&&(k[S++]=o[R][M]);return k};i1.exports=T});var l1=a1(),g1=O();window.T2QR=function(t){let e=new l1(-1,g1.M);e.addData(t),e.make();let i=e.getModuleCount(),r=[];for(let n=0;n<i;n++){let a=[];for(let o=0;o<i;o++)a.push(e.isDark(n,o)?1:0);r.push(a)}return r};})();
+
+</script>
+<script>
+/* File Transfer: device to device with WebRTC. ntfy.sh is only used to connect the two devices. */
 (()=>{
-const T=window.T2I,$=id=>document.getElementById('bg_'+id);
-const S={bmp:null,name:'photo',w:0,h:0,pv:null,pvData:null,mask:null,maskCv:null,bg:'transp',bgColor:'#ffffff',brush:'off',compare:false,busy:false,kind:''};
-const say=(t,err)=>{S.last=Date.now();const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
+const T=window.T2I,$=id=>document.getElementById('tf_'+id);
+const NTFY='https://ntfy.sh/',ALPHA='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}];
+const rid=n=>{const a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,v=>ALPHA[v%ALPHA.length]).join('')};
+const say=(t,err)=>{const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
+const fmt=b=>b>=1048576?(b/1048576).toFixed(1)+' MB':b>=1024?Math.round(b/1024)+' KB':b+' B';
+const S={role:null,id:null,code:null,peer:null,sig:null,pc:null,dc:null,connected:false,timer:null,joinTimer:null,buf:{}};
 
-/* ---- plain-background algorithm ---- */
-function kmeans(pts,k){
-  const c=[];for(let i=0;i<k;i++)c.push(pts[Math.floor((i+.5)*pts.length/k)].slice());const cnt=new Array(k).fill(0);
-  for(let it=0;it<8;it++){
-    const sum=c.map(()=>[0,0,0]);cnt.fill(0);
-    for(const p of pts){let bi=0,bd=1e9;for(let i=0;i<k;i++){const d=(p[0]-c[i][0])**2+(p[1]-c[i][1])**2+(p[2]-c[i][2])**2;if(d<bd){bd=d;bi=i}}sum[bi][0]+=p[0];sum[bi][1]+=p[1];sum[bi][2]+=p[2];cnt[bi]++}
-    for(let i=0;i<k;i++)if(cnt[i])c[i]=sum[i].map(v=>v/cnt[i]);
-  }
-  return c.map((v,i)=>({c:v,w:cnt[i]/pts.length})).filter(o=>o.w>.08);
+/* ---- signalling through ntfy.sh ---- */
+function openSig(topic,onmsg){
+  const es=new EventSource(NTFY+topic+'/sse?since=2m');
+  const ready=new Promise(res=>{es.onopen=()=>res();setTimeout(res,2500)});
+  es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='message'&&d.message)onmsg(d.message)}catch(_){}};
+  return{ready,send:m=>fetch(NTFY+topic,{method:'POST',body:m}).catch(()=>{}),close:()=>es.close()};
 }
-function plainRaw(tol){
-  const w=S.w,h=S.h,n=w*h,d=S.pvData.data,bw=Math.max(2,Math.round(Math.min(w,h)*.03)),pts=[],st=Math.max(1,Math.round(Math.max(w,h)/300));
-  for(let y=0;y<h;y+=st)for(let x=0;x<w;x+=st){if(x<bw||y<bw||x>=w-bw||y>=h-bw){const j=(y*w+x)*4;pts.push([d[j],d[j+1],d[j+2]])}}
-  const cl=kmeans(pts,3),dist=new Float32Array(n);
-  for(let i=0,j=0;i<n;i++,j+=4){let m=1e9;for(const o of cl){const dr=d[j]-o.c[0],dg=d[j+1]-o.c[1],db=d[j+2]-o.c[2],v=2*dr*dr+4*dg*dg+3*db*db;if(v<m)m=v}dist[i]=Math.sqrt(m/9)}
-  const tHi=tol,tLo=tol*.4,reg=new Uint8Array(n),q=new Int32Array(n);let qh=0,qt=0;
-  const push=i=>{if(!reg[i]&&dist[i]<=tHi){reg[i]=1;q[qt++]=i}};
-  for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}for(let y=0;y<h;y++){push(y*w);push(y*w+w-1)}
-  while(qh<qt){const i=q[qh++],x=i%w,y=(i-x)/w;if(x>0)push(i-1);if(x<w-1)push(i+1);if(y>0)push(i-w);if(y<h-1)push(i+w)}
-  let near=Uint8Array.from(reg);
-  for(let it=0;it<3;it++){const nx=Uint8Array.from(near);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x;if(!near[i]&&(near[i-1]||near[i+1]||near[i-w]||near[i+w]))nx[i]=1}near=nx}
-  const out=new Uint8Array(n);
-  for(let i=0;i<n;i++){if(reg[i])out[i]=0;else if(near[i]){const t=T.clamp((dist[i]-tLo)/(tHi*1.4-tLo),0,1);out[i]=Math.round(255*t*t*(3-2*t))}else out[i]=255}
-  return out;
+function sendBig(k,to,text){
+  const CH=2800,n=Math.ceil(text.length/CH);
+  for(let i=0;i<n;i++)S.sig.send(JSON.stringify({k,from:S.id,to,i,n,d:text.slice(i*CH,(i+1)*CH)}));
 }
-function keepMain(a,w,h){
-  const n=w*h,lab=new Int32Array(n),q=new Int32Array(n);let best=0,bestN=0,id=0;
-  for(let s=0;s<n;s++){
-    if(a[s]<128||lab[s])continue;id++;let qh=0,qt=0,cnt=0;q[qt++]=s;lab[s]=id;
-    while(qh<qt){const i=q[qh++],x=i%w,y=(i-x)/w;cnt++;const t=j=>{if(a[j]>=128&&!lab[j]){lab[j]=id;q[qt++]=j}};if(x>0)t(i-1);if(x<w-1)t(i+1);if(y>0)t(i-w);if(y<h-1)t(i+w)}
-    if(cnt>bestN){bestN=cnt;best=id}
-  }
-  if(!best)return a;
-  const sizes=new Int32Array(id+1);for(let i=0;i<n;i++)if(lab[i])sizes[lab[i]]++;
-  const o=new Uint8Array(n);for(let i=0;i<n;i++){if(lab[i]&&sizes[lab[i]]>=bestN*.1)o[i]=a[i]}
-  for(let it=0;it<2;it++)for(let i=1;i<n-1;i++)if(!o[i]&&a[i]>0&&a[i]<128&&(o[i-1]||o[i+1]||(i>w&&o[i-w])||(i+w<n&&o[i+w])))o[i]=a[i];
-  return o;
+function gather(m){
+  const key=m.k+m.from,a=S.buf[key]=S.buf[key]||[];a[m.i]=m.d;
+  let c=0;for(let i=0;i<m.n;i++)if(a[i]!==undefined)c++;
+  if(c===m.n){delete S.buf[key];return a.join('')}return null;
 }
-
-/* ---- mask handling ---- */
-function ensureMask(){if(!S.mask){const n=S.w*S.h;S.mask={auto:new Uint8Array(n).fill(255),ovr:new Uint8Array(n)}}return S.mask}
-function finalAlpha(){
-  const M=S.mask,n=S.w*S.h,a=new Uint8ClampedArray(n);
-  for(let i=0;i<n;i++)a[i]=M.ovr[i]===1?0:M.ovr[i]===2?255:M.auto[i];
-  const sm=T.boxBlur(a,S.w,S.h,1,1);
-  for(let i=0;i<n;i++)if(M.ovr[i])a[i]=sm[i];
-  return a;
-}
-function maskCanvas(){
-  const w=S.w,h=S.h,c=S.maskCv||(S.maskCv=document.createElement('canvas'));c.width=w;c.height=h;
-  const x=c.getContext('2d'),id=x.createImageData(w,h),a=finalAlpha();for(let i=0;i<w*h;i++)id.data[i*4+3]=a[i];x.putImageData(id,0,0);return c;
-}
-function render(){
-  if(!S.bmp)return;const cv=$('cv'),w=S.w,h=S.h;cv.width=w;cv.height=h;const x=cv.getContext('2d');
-  x.drawImage(S.pv,0,0);
-  if(S.compare||!S.mask)return;
-  x.globalCompositeOperation='destination-in';x.drawImage(maskCanvas(),0,0);
-  if(S.bg!=='transp'){x.globalCompositeOperation='destination-over';x.fillStyle=S.bg==='custom'?S.bgColor:S.bg;x.fillRect(0,0,w,h)}
-  x.globalCompositeOperation='source-over';
-}
-let raf=0;const schedule=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(render)};
-
-/* ---- removing ---- */
-function showBar(v){S.last=Date.now();const b=$('bar');b.hidden=v==null;if(v!=null)b.querySelector('i').style.width=Math.round(v*100)+'%'}
-let RM=null;
-let ACTIVE=0;
-function setMask(get,tok){if(tok!==ACTIVE)throw Error('stale');const M=ensureMask(),n=S.w*S.h;for(let i=0;i<n;i++){let v=get(i);M.auto[i]=v<6?0:v>249?255:v}M.ovr.fill(0)}
-/* Engine 1: RMBG-1.4 (high quality, same class of model used by professional tools) */
-async function aiRmbg(tok){
-  showBar(.05);say('Loading the AI engine…');
-  const TF=await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
-  TF.env.allowLocalModels=false;
-  try{TF.env.backends.onnx.wasm.numThreads=1;TF.env.backends.onnx.wasm.proxy=false}catch(e){}
-  if(!RM){
-    const seen={},cb=p=>{if(p&&p.status==='progress'&&p.file){seen[p.file]=p.progress;const v=Object.values(seen),a=v.reduce((x,y)=>x+y,0)/v.length;showBar(Math.max(.05,a/100));say('Downloading the AI model (first time only)… '+Math.round(a)+'%')}};
-    const model=await TF.AutoModel.from_pretrained('briaai/RMBG-1.4',{config:{model_type:'custom'},progress_callback:cb});
-    say('Starting the AI…');showBar(.9);await T.tick();
-    const proc=await TF.AutoProcessor.from_pretrained('briaai/RMBG-1.4',{config:{do_normalize:true,do_pad:false,do_rescale:true,do_resize:true,image_mean:[.5,.5,.5],feature_extractor_type:'ImageFeatureExtractor',image_std:[1,1,1],resample:2,rescale_factor:1/255,size:{width:1024,height:1024}}});
-    RM={TF,model,proc};
-  }
-  say('Removing the background… (this can take up to a minute on a phone)');showBar(.93);await T.tick();
-  const blob=await new Promise(r=>S.pv.toBlob(r,'image/png'));
-  const img=await RM.TF.RawImage.fromBlob(blob);
-  const {pixel_values}=await RM.proc(img);
-  const out=await RM.model({input:pixel_values}),t=out.output||out[Object.keys(out)[0]];
-  const m=await RM.TF.RawImage.fromTensor(t[0].mul(255).to('uint8')).resize(S.w,S.h),ch=m.channels||1,d=m.data;
-  let kept=0;for(let i=0;i<S.w*S.h;i++)if(d[i*ch]>127)kept++;
-  if(kept<S.w*S.h*.002)throw Error('The AI found no object in this photo.');
-  setMask(i=>d[i*ch],tok);S.kind='rmbg';
-}
-/* Engine 2: MediaPipe selfie segmentation (small and fast, for photos of people) */
-let MP=null;
-function guided(p,r,eps){
-  const w=S.w,h=S.h,n=w*h,d=S.pvData.data,I=new Float32Array(n);
-  for(let i=0,j=0;i<n;i++,j+=4)I[i]=(.299*d[j]+.587*d[j+1]+.114*d[j+2])/255;
-  const bb=a=>T.boxBlur(a,w,h,r,1),mI=bb(I),mp=bb(p),Ip=new Float32Array(n),II=new Float32Array(n);
-  for(let i=0;i<n;i++){Ip[i]=I[i]*p[i];II[i]=I[i]*I[i]}
-  const cIp=bb(Ip),cII=bb(II),a=new Float32Array(n),b=new Float32Array(n);
-  for(let i=0;i<n;i++){const v=cII[i]-mI[i]*mI[i],c=cIp[i]-mI[i]*mp[i];a[i]=c/(v+eps);b[i]=mp[i]-a[i]*mI[i]}
-  const ma=bb(a),mb=bb(b),q=new Float32Array(n);
-  for(let i=0;i<n;i++)q[i]=T.clamp(ma[i]*I[i]+mb[i],0,1);
-  return q;
-}
-async function loadMP(){
-  const V='0.10.14',lib=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@'+V+'/+esm');
-  if(!MP){
-    const fs=await lib.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@'+V+'/wasm');
-    showBar(.4);say('Downloading the portrait AI…');
-    MP=await lib.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite'},runningMode:'IMAGE',outputCategoryMask:false,outputConfidenceMasks:true});
-  }
-  return MP;
-}
-/* probability (0..1) that each pixel belongs to a person, at the working size */
-async function personProb(){
-  const mp=await loadMP();
-  const res=mp.segment(S.pv),masks=res.confidenceMasks||[];
-  if(!masks.length)throw Error('the portrait AI returned no mask');
-  let best=null,bs=-9;
-  for(const m of masks){
-    const arr=m.getAsFloat32Array(),mw=m.width,mh=m.height;let c=0,cn=0,e=0,en=0;
-    for(let y=0;y<mh;y+=2)for(let x=0;x<mw;x+=2){const v=arr[y*mw+x],inC=x>mw*.3&&x<mw*.7&&y>mh*.3&&y<mh*.7;if(inC){c+=v;cn++}else if(x<mw*.12||x>mw*.88||y<mh*.12){e+=v;en++}}
-    const sc=c/Math.max(1,cn)-e/Math.max(1,en);if(sc>bs){bs=sc;best={arr:Float32Array.from(arr),mw,mh}}
-  }
-  try{res.close&&res.close()}catch(e){}
-  const sc=document.createElement('canvas');sc.width=best.mw;sc.height=best.mh;const sx=sc.getContext('2d'),sid=sx.createImageData(best.mw,best.mh);
-  for(let i=0;i<best.mw*best.mh;i++){sid.data[i*4+3]=Math.round(T.clamp(best.arr[i],0,1)*255)}sx.putImageData(sid,0,0);
-  const up=document.createElement('canvas');up.width=S.w;up.height=S.h;const ux=up.getContext('2d');ux.imageSmoothingQuality='high';ux.drawImage(sc,0,0,S.w,S.h);
-  const ad=ux.getImageData(0,0,S.w,S.h).data,n=S.w*S.h,p=new Float32Array(n);let kept=0;
-  for(let i=0;i<n;i++){p[i]=ad[i*4+3]/255;if(p[i]>.5)kept++}
-  if(kept<n*.02||kept>n*.985)throw Error('no person found in this photo');
-  return p;
-}
-async function aiMediaPipe(tok){
-  showBar(.1);say('Loading the portrait AI…');
-  await loadMP();
-  say('Removing the background…');showBar(.8);await T.tick();
-  const p=await personProb(),q=guided(p,Math.max(4,Math.round(Math.min(S.w,S.h)*.012)),1e-3);
-  setMask(i=>q[i]*255,tok);S.kind='portrait';
-}
-function morph(a,w,h,steps,grow){
-  let cur=a;
-  for(let s=0;s<steps;s++){
-    const nx=new Uint8Array(cur.length);
-    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
-      const i=y*w+x,v=cur[i],l=x>0?cur[i-1]:v,r=x<w-1?cur[i+1]:v,u=y>0?cur[i-w]:v,d=y<h-1?cur[i+w]:v;
-      nx[i]=grow?Math.max(v,l,r,u,d):Math.min(v,l,r,u,d);
-    }
-    cur=nx;
-  }
-  return cur;
-}
-/* keep only the person: other objects (toys, cloth, furniture) are removed */
-async function applyPerson(){
-  const M=S.mask;if(!M||!S.base)return true;
-  if(!$('person').checked||S.kind==='portrait'){M.auto=Uint8Array.from(S.base);return true}
+async function onSig(raw){
+  let m;try{m=JSON.parse(raw)}catch(_){return}
+  if(!m||m.from===S.id)return;
   try{
-    const n=S.w*S.h;
-    if(!S.pm){
-      say('Keeping only the person…');showBar(.6);await T.tick();
-      const p=await personProb();let b=new Uint8Array(n);for(let i=0;i<n;i++)b[i]=p[i]>.3?255:0;
-      const steps=Math.max(4,Math.round(Math.min(S.w,S.h)*.012));b=morph(b,S.w,S.h,steps,true);
-      S.pm=T.boxBlur(b,S.w,S.h,Math.max(2,Math.round(steps/2)),2);
+    if(S.role==='host'){
+      if(m.k==='join'&&!S.pc){S.peer=m.from;await startHost()}
+      else if(m.k==='answer'&&m.to===S.id&&S.pc){const sdp=gather(m);if(sdp&&!S.pc.remoteDescription)await S.pc.setRemoteDescription({type:'answer',sdp})}
+    }else if(S.role==='guest'){
+      if(m.k==='offer'&&m.to===S.id&&!S.pc){const sdp=gather(m);if(sdp)await startGuest(sdp,m.from)}
     }
-    const out=new Uint8Array(n);let kept=0,orig=0;
-    for(let i=0;i<n;i++){out[i]=Math.round(S.base[i]*S.pm[i]/255);if(out[i]>127)kept++;if(S.base[i]>127)orig++}
-    if(kept<orig*.15)throw Error('the person did not match the cut-out');
-    M.auto=keepMain(out,S.w,S.h);return true;
-  }catch(e){
-    console.warn('Could not isolate the person',e);
-    M.auto=keepMain(Uint8Array.from(S.base),S.w,S.h);return false;
-  }
+  }catch(e){fail('The devices could not connect.')}
 }
-/* Engine 3: IS-Net via background-removal library */
-async function aiImgly(tok){
-  say('Removing the background…');showBar(.05);
-  const lib=await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
-  const blob=await new Promise(r=>S.pv.toBlob(r,'image/png'));
-  const out=await lib.removeBackground(blob,{model:'isnet_quint8',progress:(k,cur,tot)=>{if(tot){showBar(Math.max(.05,cur/tot));say(/fetch/.test(k)?'Downloading the AI model (first time only)… '+Math.round(cur/tot*100)+'%':'Removing the background…')}}});
-  const bm=await createImageBitmap(out),t=document.createElement('canvas');t.width=S.w;t.height=S.h;const tx=t.getContext('2d');tx.drawImage(bm,0,0,S.w,S.h);
-  const d=tx.getImageData(0,0,S.w,S.h).data;setMask(i=>d[i*4+3],tok);S.kind='ai';
-}
-function plain(){
-  const M=ensureMask();let a=plainRaw(40);a=keepMain(a,S.w,S.h);const b=T.boxBlur(a,S.w,S.h,1,2);M.auto=Uint8Array.from(b,v=>Math.round(v));M.ovr.fill(0);S.kind='plain';
-}
-async function removeNow(mode){
-  if(S.busy||!S.bmp)return;S.busy=true;$('run').disabled=true;['again','basic'].forEach(k=>$(k).disabled=true);
-  try{
-    if(mode==='plain'){say('Removing the background…');showBar(.5);await T.tick();plain();S.base=Uint8Array.from(S.mask.auto);S.pm=null;await applyPerson();say('Done. This mode works best on plain backgrounds. Use the brush to fix the edges.')}
-    else{
-      let ok=false;const errs=[],limit=window.__bgStall||150000;
-      for(const [name,eng] of [['RMBG',aiRmbg],['portrait',aiMediaPipe],['IS-Net',aiImgly]]){
-        const tok=++ACTIVE;
-        try{
-          await new Promise((res,rej)=>{
-            S.last=Date.now();let done=false;
-            const iv=setInterval(()=>{if(!done&&Date.now()-S.last>limit){done=true;clearInterval(iv);rej(Error('no progress for '+Math.round(limit/1000)+' s'))}},500);
-            eng(tok).then(()=>{if(!done){done=true;clearInterval(iv);res()}},e=>{if(!done){done=true;clearInterval(iv);rej(e)}});
-          });
-          ok=true;console.info('Background engine used: '+name);break;
-        }catch(e){ACTIVE++;console.warn('Background engine failed',name,e);errs.push(name+': '+((e&&e.message)||String(e)))}
-      }
-      if(S.mask){S.base=Uint8Array.from(S.mask.auto);S.pm=null}
-      if(ok){const pOk=await applyPerson();say(pOk?'Done. Only the person is kept. Hold the button to compare, or use the brush to fix any edges.':'Done. The AI could not isolate the person (it needs internet), so some other objects may remain. Use the Erase brush to remove them.',!pOk)}
-      else{
-        showBar(.5);await T.tick();plain();S.base=Uint8Array.from(S.mask.auto);S.pm=null;
-        const M=S.mask;let rem=0;for(let i=0;i<M.auto.length;i++)if(M.auto[i]<128)rem++;
-        const pct=rem/M.auto.length;
-        say('The AI could not run ('+errs.join(' | ').slice(0,420)+'). '+(pct<.03?'Plain mode also found almost no plain background, so nothing was removed. ':'Plain-background mode was used instead, which only works on plain backgrounds. ')+'Check your internet connection, reload the page and tap "Try again with AI".',1);
-      }
-    }
-  }catch(e){say('Could not remove the background from this photo.',1)}
-  showBar(null);S.busy=false;$('run').disabled=false;['again','basic'].forEach(k=>$(k).disabled=false);
-  if(S.mask){$('run').hidden=true;$('post').hidden=false;$('cmp').hidden=false}
-  render();
-}
-async function load(f){
-  if(!f)return;if(!isImgFile(f)){say('Please choose a photo (JPG, PNG or WebP).',1);return}
-  say('Opening…');
-  try{
-    const b=await T.readFile(f);
-    if((b.width||b.naturalWidth)*(b.height||b.naturalHeight)>80e6)throw Error('That photo is too large for the browser.');
-    S.bmp=b;S.name=f.name.replace(/\.[^.]+$/,'')||'photo';S.pv=T.fitCanvas(b,1600);S.w=S.pv.width;S.h=S.pv.height;
-    S.pvData=S.pv.getContext('2d').getImageData(0,0,S.w,S.h);S.mask=null;S.maskCv=null;S.base=null;S.pm=null;S.bg='transp';S.brush='off';syncBg();syncBrush();
-    $('drop').hidden=true;$('app').hidden=false;$('run').hidden=false;$('run').disabled=false;$('post').hidden=true;$('cmp').hidden=true;render();upd();say('Tap "Remove background" to remove it.');
-  }catch(e){say(e.message==='read'?'That photo could not be read.':(e.message||'That photo could not be opened.'),1)}
-}
-T.wire($('drop'),$('file'),load);
-$('change').onclick=()=>{$('app').hidden=true;$('drop').hidden=false;S.bmp=null;S.mask=null;say('')};
-$('run').onclick=()=>removeNow('ai');
-$('person').onchange=async()=>{if(!S.mask||S.busy)return;S.busy=true;await applyPerson();S.busy=false;showBar(null);render()};
-$('again').onclick=()=>{S.mask=null;removeNow('ai')};
-$('basic').onclick=()=>{S.mask=null;removeNow('plain')};
-const cmp=$('cmp');
-cmp.addEventListener('pointerdown',e=>{e.preventDefault();S.compare=true;render()});
-['pointerup','pointerleave','pointercancel'].forEach(ev=>cmp.addEventListener(ev,()=>{if(S.compare){S.compare=false;render()}}));
 
-/* ---- background colour and brush ---- */
-function syncBg(){$('bgs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.c===S.bg));$('cwrap').hidden=S.bg!=='custom'}
-$('bgs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.bg=b.dataset.c;syncBg();render()});
-$('ccol').oninput=e=>{S.bgColor=e.target.value;if(S.bg==='custom')schedule()};
-function syncBrush(){$('brush').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.b===S.brush));$('view').classList.toggle('brush',S.brush!=='off')}
-$('brush').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.brush=b.dataset.b;if(S.brush!=='off')ensureMask();syncBrush()});
-$('bs').oninput=e=>{$('bsv').textContent=e.target.value};
-$('zoom').onchange=e=>{$('cv').style.width=(100*(+e.target.value))+'%'};
-(()=>{
-  const cv=$('cv');let last=null,down=false;
-  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height,cv.width/r.width]};
-  const dab=(a,b,rad)=>{
-    const M=S.mask,w=S.w,h=S.h,val=S.brush==='erase'?1:2,steps=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/Math.max(1,rad/3)));
-    for(let s=0;s<=steps;s++){
-      const cx=a[0]+(b[0]-a[0])*s/steps,cy=a[1]+(b[1]-a[1])*s/steps,x0=Math.max(0,Math.floor(cx-rad)),x1=Math.min(w-1,Math.ceil(cx+rad)),y0=Math.max(0,Math.floor(cy-rad)),y1=Math.min(h-1,Math.ceil(cy+rad));
-      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if((x-cx)*(x-cx)+(y-cy)*(y-cy)<=rad*rad)M.ovr[y*w+x]=val;
-    }
-  };
-  cv.addEventListener('pointerdown',e=>{if(S.brush==='off'||!S.mask)return;e.preventDefault();down=true;cv.setPointerCapture(e.pointerId);const p=pos(e);last=p;dab(p,p,+$('bs').value/2*p[2]);schedule()});
-  cv.addEventListener('pointermove',e=>{if(!down)return;const p=pos(e);dab(last,p,+$('bs').value/2*p[2]);last=p;schedule()});
-  ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{down=false;last=null}));
-})();
+/* ---- WebRTC ---- */
+const iceDone=(pc,ms=4000)=>new Promise(res=>{
+  if(pc.iceGatheringState==='complete')return res();
+  const t=setTimeout(res,ms);
+  pc.addEventListener('icegatheringstatechange',()=>{if(pc.iceGatheringState==='complete'){clearTimeout(t);res()}});
+});
+function newPC(){
+  const pc=new RTCPeerConnection({iceServers:ICE});
+  pc.onconnectionstatechange=()=>{if(S.connected&&(pc.connectionState==='failed'||pc.connectionState==='closed'))lost()};
+  return pc;
+}
+function armTimer(){clearTimeout(S.timer);S.timer=setTimeout(()=>{if(!S.connected)fail('Could not connect directly. Try putting both devices on the same Wi-Fi, then create a new code.')},(window.__tfTimeout||45000))}
+async function startHost(){
+  S.pc=newPC();setupDC(S.pc.createDataChannel('t2box'));
+  const off=await S.pc.createOffer();await S.pc.setLocalDescription(off);await iceDone(S.pc);
+  sendBig('offer',S.peer,S.pc.localDescription.sdp);$('wait').textContent='Connecting…';armTimer();
+}
+async function startGuest(sdp,host){
+  clearInterval(S.joinTimer);S.peer=host;S.pc=newPC();S.pc.ondatachannel=e=>setupDC(e.channel);
+  await S.pc.setRemoteDescription({type:'offer',sdp});const ans=await S.pc.createAnswer();await S.pc.setLocalDescription(ans);await iceDone(S.pc);
+  sendBig('answer',host,S.pc.localDescription.sdp);$('jmsg').textContent='Connecting…';armTimer();
+}
+function setupDC(dc){
+  S.dc=dc;dc.binaryType='arraybuffer';dc.bufferedAmountLowThreshold=262144;
+  dc.onopen=onConnected;dc.onclose=()=>{if(S.connected)lost()};dc.onmessage=onData;
+}
+function resetSig(){clearTimeout(S.timer);clearInterval(S.joinTimer);if(S.sig){S.sig.close();S.sig=null}}
+function cleanup(){
+  resetSig();try{S.dc&&S.dc.close()}catch(_){}try{S.pc&&S.pc.close()}catch(_){}
+  S.pc=null;S.dc=null;S.role=null;S.connected=false;S.peer=null;S.buf={};queue.length=0;cur=null;
+}
+function home(){
+  $('live').hidden=true;$('start').hidden=false;$('codebox').hidden=true;$('create').hidden=false;$('jmsg').textContent='';$('list').innerHTML='';
+}
+function fail(msg){const wasJoin=S.role==='guest';cleanup();home();say(msg,1);if(wasJoin)$('jmsg').textContent=''}
+function lost(){
+  if(!S.connected)return;S.connected=false;const d=document.querySelector('#tf_live .tfdot');if(d)d.classList.add('off');
+  $('state').textContent='Disconnected';say('The other device disconnected. You can create a new code to connect again.',1);
+}
+function onConnected(){
+  clearTimeout(S.timer);clearInterval(S.joinTimer);S.connected=true;if(S.sig){S.sig.close();S.sig=null}
+  $('start').hidden=true;$('live').hidden=false;document.querySelector('#tf_live .tfdot').classList.remove('off');
+  $('state').textContent='Connected to your other device';say('');
+}
 
-/* ---- download in HD ---- */
-function target(){const W=S.bmp.width||S.bmp.naturalWidth,H=S.bmp.height||S.bmp.naturalHeight,L=Math.max(W,H),v=$('size').value;let t=L;if(v!=='orig')t=+v;t=Math.min(t,8000);const k=t/L;return[Math.max(1,Math.round(W*k)),Math.max(1,Math.round(H*k))]}
-function upd(){if(!S.bmp)return;const[w,h]=target();$('dim').textContent='Download size: '+w+' × '+h+' px ('+(w*h/1e6).toFixed(1)+' MP)'}
-['size','fmt'].forEach(k=>$(k).onchange=upd);
-$('dl').onclick=async()=>{
-  if(!S.bmp)return;const b=$('dl'),label=b.textContent,[W,H]=target();
-  if(W*H>45e6){say('That size is too large for this device. Choose a smaller size.',1);return}
-  b.disabled=true;b.textContent='Please wait…';await T.tick();
-  try{
-    const c=T.scaleTo(S.bmp,W,H),x=c.getContext('2d');
-    if(S.mask){
-      const mc=document.createElement('canvas');mc.width=W;mc.height=H;const mx=mc.getContext('2d');mx.imageSmoothingQuality='high';mx.drawImage(maskCanvas(),0,0,W,H);
-      const id=mx.getImageData(0,0,W,H),d=id.data;for(let i=3;i<d.length;i+=4){const v=(d[i]-128)*1.5+128;d[i]=v<0?0:v>255?255:v}mx.putImageData(id,0,0);
-      x.globalCompositeOperation='destination-in';x.drawImage(mc,0,0);
-    }
-    if(S.bg!=='transp'){x.globalCompositeOperation='destination-over';x.fillStyle=S.bg==='custom'?S.bgColor:S.bg;x.fillRect(0,0,W,H)}
-    x.globalCompositeOperation='source-over';
-    let fmt=$('fmt').value,note='';
-    if(fmt==='jpg'&&S.mask&&S.bg==='transp'){fmt='png';note=' (PNG, because JPG cannot keep a transparent background)'}
-    let out=c;
-    if(fmt==='jpg'){const f=document.createElement('canvas');f.width=W;f.height=H;const fx=f.getContext('2d');fx.fillStyle='#fff';fx.fillRect(0,0,W,H);fx.drawImage(c,0,0);out=f}
-    const type=fmt==='jpg'?'image/jpeg':fmt==='webp'?'image/webp':'image/png',blob=await new Promise(r=>out.toBlob(r,type,.98));
-    if(!blob)throw Error('This browser could not create that file.');
-    T.save(blob,S.name+'-no-bg.'+(fmt==='jpg'?'jpg':fmt));say('Saved '+W+' × '+H+' px'+note+'.');
-  }catch(e){say(e.message||'Could not create the file.',1)}
-  b.textContent=label;b.disabled=false;
+/* ---- creating and joining ---- */
+function drawQR(text){
+  const c=$('qr');
+  if(!/^https?:$/.test(location.protocol)||/appassets/.test(location.host)||!window.T2QR){c.parentElement.hidden=true;return}
+  c.parentElement.hidden=false;
+  const m=window.T2QR(text),n=m.length,q=4,sc=Math.max(3,Math.floor(300/(n+2*q))),W=(n+2*q)*sc;
+  c.width=c.height=W;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,W);x.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(m[r][k])x.fillRect((k+q)*sc,(r+q)*sc,sc,sc);
+}
+const linkFor=code=>location.href.split('#')[0]+'#transfer='+code;
+$('create').onclick=()=>{
+  cleanup();say('');S.role='host';S.id=rid(6);S.code=rid(6);
+  $('code').textContent=S.code;$('codebox').hidden=false;$('create').hidden=true;$('wait').textContent='Waiting for the other device…';
+  drawQR(linkFor(S.code));
+  S.sig=openSig('t2box-'+S.code,onSig);
 };
+$('cancel').onclick=()=>{cleanup();home();say('')};
+$('copylink').onclick=async()=>{
+  const t=/^https?:$/.test(location.protocol)&&!/appassets/.test(location.host)?linkFor(S.code):S.code;
+  try{await navigator.clipboard.writeText(t);$('wait').textContent='Copied.'}catch(_){$('wait').textContent=t}
+};
+function join(code){
+  code=(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length!==6){$('jmsg').textContent='Type the 6 letter code.';return}
+  cleanup();say('');S.role='guest';S.id=rid(6);S.code=code;$('jmsg').textContent='Connecting…';
+  S.sig=openSig('t2box-'+code,onSig);
+  const hello=()=>S.sig&&S.sig.send(JSON.stringify({k:'join',from:S.id}));
+  S.sig.ready.then(hello);let tries=0;
+  S.joinTimer=setInterval(()=>{if(++tries>(window.__tfTries||10)){fail('No device answered this code. Check the code and try again.');return}hello()},(window.__tfJoinMs||4000));
+}
+$('join').onclick=()=>join($('in').value);
+$('in').addEventListener('keydown',e=>{if(e.key==='Enter')join($('in').value)});
+$('in').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')});
+$('off').onclick=()=>{cleanup();home();say('')};
+
+/* ---- list ---- */
+function row(dir,name,size){
+  const r=document.createElement('div');r.className='row tfrow';
+  r.innerHTML='<span class="dirb">'+(dir==='out'?'&uarr;':'&darr;')+'</span><span class="nm"></span><span class="st"></span><div class="bar"><i></i></div>';
+  r.querySelector('.nm').textContent=name;r.querySelector('.st').textContent=fmt(size)+(dir==='out'?' · Waiting':' · Receiving');
+  $('list').prepend(r);return r;
+}
+function prog(r,f,label){r.querySelector('i').style.width=Math.round(f*100)+'%';r.querySelector('.st').textContent=label}
+function textRow(dir,text){
+  const r=document.createElement('div');r.className='row tfrow';
+  r.innerHTML='<span class="dirb">'+(dir==='out'?'&uarr;':'&darr;')+'</span><span class="txt"></span>';
+  const t=r.querySelector('.txt');
+  if(/^https?:\/\/\S+$/.test(text.trim())){const a=document.createElement('a');a.href=text.trim();a.target='_blank';a.rel='noopener';a.textContent=text.trim();t.appendChild(a)}else t.textContent=text;
+  const b=document.createElement('button');b.type='button';b.className='cp';b.textContent='Copy';
+  b.onclick=async()=>{try{await navigator.clipboard.writeText(text);b.textContent='Copied'}catch(_){}};r.appendChild(b);$('list').prepend(r);
+}
+
+/* ---- sending ---- */
+const queue=[];let sending=false;
+const low=()=>new Promise(res=>{S.dc.onbufferedamountlow=()=>{S.dc.onbufferedamountlow=null;res()}});
+async function sendFile(it){
+  const f=it.f,dc=S.dc,id=rid(8);
+  dc.send(JSON.stringify({t:'meta',id,name:f.name,size:f.size,type:f.type}));
+  let off=0;
+  while(off<f.size){
+    const blk=await f.slice(off,off+262144).arrayBuffer();
+    for(let p=0;p<blk.byteLength;p+=16384){
+      if(!S.dc||S.dc.readyState!=='open')throw Error('Disconnected');
+      if(dc.bufferedAmount>1048576)await low();
+      dc.send(blk.slice(p,p+16384));
+    }
+    off+=blk.byteLength;prog(it.row,off/f.size,fmt(f.size)+' · Sending '+Math.round(off/f.size*100)+'%');
+  }
+  dc.send(JSON.stringify({t:'end',id}));prog(it.row,1,fmt(f.size)+' · Sent');
+}
+async function run(){
+  sending=true;
+  while(queue.length){const it=queue.shift();try{await sendFile(it)}catch(e){it.row.querySelector('.st').textContent='Could not send';it.row.querySelector('.st').classList.add('err')}}
+  sending=false;
+}
+function addFiles(list){
+  if(!S.connected||!S.dc||S.dc.readyState!=='open'){say('Connect to your other device first.',1);return}
+  for(const f of Array.from(list||[])){queue.push({f,row:row('out',f.name,f.size)})}
+  if(!sending)run();
+}
+T.wire($('drop'),$('file'),()=>{});
+$('drop').addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+$('file').onchange=()=>{addFiles($('file').files);$('file').value=''};
+$('sendtxt').onclick=()=>{
+  const t=$('txt').value;if(!t.trim())return;
+  if(!S.connected||!S.dc||S.dc.readyState!=='open'){say('Connect to your other device first.',1);return}
+  S.dc.send(JSON.stringify({t:'text',text:t}));textRow('out',t);$('txt').value='';
+};
+
+/* ---- receiving ---- */
+let cur=null;
+function onData(ev){
+  if(typeof ev.data==='string'){
+    let m;try{m=JSON.parse(ev.data)}catch(_){return}
+    if(m.t==='meta')cur={name:m.name||'file',size:m.size||0,type:m.type,parts:[],got:0,row:row('in',m.name||'file',m.size||0)};
+    else if(m.t==='end'&&cur){
+      const blob=new Blob(cur.parts,{type:cur.type||'application/octet-stream'}),a=document.createElement('a');
+      a.className='dl';a.href=URL.createObjectURL(blob);a.download=cur.name;a.textContent='Save';
+      prog(cur.row,1,fmt(cur.size)+' · Received');cur.row.appendChild(a);cur=null;
+    }else if(m.t==='text')textRow('in',m.text||'');
+  }else if(cur){
+    cur.parts.push(ev.data);cur.got+=ev.data.byteLength;
+    prog(cur.row,cur.size?cur.got/cur.size:1,fmt(cur.size)+' · Receiving '+(cur.size?Math.round(cur.got/cur.size*100):100)+'%');
+  }
+}
+
+/* ---- open from a link or QR code ---- */
+if(window.__t2join){$('in').value=window.__t2join;setTimeout(()=>join(window.__t2join),300)}
 })();
 </script>
 <script>
