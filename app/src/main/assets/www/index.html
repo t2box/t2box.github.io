@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T2BOX – MP3 Convert, Image Tools, Card Print, File Transfer and PDF Tools</title>
+<title>T2BOX – MP3 Convert, Image Tools, Card Print, File Transfer, Screen Share and PDF Tools</title>
 <meta name="description" content="T2BOX: free online tools to convert MP3 audio, resize images, print passport photos and PVC or PAN cards on A4, send files between your computer and phone, and merge, edit or unlock PDF files. Runs in your browser, no signup.">
 <meta name="theme-color" content="#020a0d">
 <link rel="manifest" href="manifest.webmanifest">
@@ -227,12 +227,30 @@ canvas#s_pv{max-width:100%;touch-action:none;cursor:grab;box-shadow:0 0 0 2px va
 .tfbar b{flex:1}
 .tfbar .btn{margin:0;padding:8px 16px}
 .tfdot{width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px 2px rgba(31,229,210,.7)}
+.tfdot.wait{background:#ffd166;box-shadow:0 0 10px 2px rgba(255,209,102,.6)}
 .tfdot.off{background:#ff948b;box-shadow:0 0 10px 2px rgba(255,148,139,.6)}
 textarea{width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--ink);font:inherit;resize:vertical}
 .tfrow .dirb{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(31,229,210,.1);color:var(--teal);font-weight:700}
 .tfrow .txt{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
 .tfrow .txt a{color:var(--teal)}
 .tfrow button.cp{background:none;border:1px solid var(--line2);border-radius:8px;color:var(--teal);padding:6px 12px;font:inherit;cursor:pointer}
+
+/* screen share */
+.shvid{background:#000;border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative}
+.shvid video{display:block;width:100%;max-height:72vh;background:#000;object-fit:contain}
+.shvid.fill video{object-fit:cover}
+.shvid.ctl{outline:3px solid var(--teal);outline-offset:-3px;touch-action:none;-webkit-user-select:none;user-select:none}
+.shkeys{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.shkeys button{padding:7px 10px;border-radius:8px;border:1px solid var(--line2);background:rgba(8,28,34,.6);color:var(--ink);font:inherit;font-size:.85rem;cursor:pointer}
+.shkeys button.on{background:var(--teal);color:#021417;border-color:transparent}
+.pendrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.5);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.pendrow span{flex:1;min-width:180px}
+.pendrow .btn{margin:0;padding:8px 16px}
+.shvid:fullscreen{border-radius:0;border:0}.shvid:fullscreen video{max-height:100vh;height:100vh}
+.chatlog{max-height:200px;overflow:auto;display:grid;gap:6px;font-size:.92rem}
+.chatlog .cm{background:rgba(3,14,18,.65);border:1px solid var(--line);border-radius:10px;padding:7px 11px;overflow-wrap:anywhere}
+.chatlog .cm b{color:var(--teal);margin-right:6px}
+.chatlog .cm.me b{color:var(--mute)}
 /* glowing floor under the workspace, echoing the logo's reflection */
 .horizon{position:relative;height:2px;width:min(94%,860px);margin:26px auto 0;background:linear-gradient(90deg,transparent,var(--teal),transparent);box-shadow:0 0 26px 4px rgba(31,229,210,.5);overflow:hidden}
 .horizon::after{content:"";position:absolute;top:-2px;left:0;width:22%;height:6px;background:linear-gradient(90deg,transparent,#fff,transparent);filter:blur(2px);transform:translateX(-120%);animation:sweep 2.4s .4s ease-out 1 forwards}
@@ -286,7 +304,7 @@ canvas#h_cr:active{cursor:grabbing}
 
 .app #h_print,.app #cd_print{display:none}
 /* tab layout for five tools */
-.tabs{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .tab{flex-direction:column;text-align:center;padding:14px 6px;gap:8px}
 .tab b{font-size:.92rem}
 .tab small{font-size:.74rem}
@@ -369,6 +387,10 @@ select{min-width:0;max-width:100%}
       <button class="tab" role="tab" id="tab-transfer" aria-controls="p-transfer" aria-selected="false">
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 16.5h5M8.5 13v3.5"/><rect x="16" y="8" width="5.5" height="11" rx="1.5"/><path d="M13.5 9.5l2-2-2-2M15.5 7.5h-4"/></svg></span>
         <span><b>File Transfer</b><small>Computer to phone, any file</small></span>
+      </button>
+      <button class="tab" role="tab" id="tab-screen" aria-controls="p-screen" aria-selected="false">
+        <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 16.5v4"/><path d="M9 10.2l2.3 2.2 4-4.4"/></svg></span>
+        <span><b>Screen Share</b><small>Show your screen on another device</small></span>
       </button>
       <button class="tab" role="tab" id="tab-pdf" aria-controls="p-pdf" aria-selected="false">
         <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
@@ -705,6 +727,70 @@ select{min-width:0;max-width:100%}
 </div>
 <div class="msg" id="tf_msg" aria-live="polite"></div>
 </section>
+<section class="panel" id="p-screen" role="tabpanel" aria-labelledby="tab-screen" hidden>
+<div id="sh_start">
+  <div class="tfgrid">
+    <div class="box">
+      <h2>Share my screen</h2>
+      <p class="hint">Use a computer (Chrome, Edge or Firefox). You choose what to share and you can stop at any time.</p>
+      <label>Picture
+        <select id="sh_q"><option value="detail">Clear (best for documents and slides)</option><option value="motion">Smooth (best for video)</option></select>
+      </label>
+      <label class="chk"><input type="checkbox" id="sh_aud"> Share sound too</label>
+      <button class="btn full" id="sh_go" type="button">Start sharing</button>
+      <p class="hint" id="sh_nat" hidden>Remote control is available in this app: the viewer can ask to control this computer and you must allow it each time. Press Ctrl+Alt+Shift+X at any time to stop it.</p>
+      <p class="hint" id="sh_web">A web page cannot control a computer. To let someone control this computer (for example for Tally), install the T2BOX Windows app on it.</p>
+    </div>
+    <div class="box">
+      <h2>Watch a screen</h2>
+      <label>Code from the other device
+        <input type="text" id="sh_in" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="For example K7M2QX">
+      </label>
+      <button class="btn full" id="sh_watch" type="button">Watch</button>
+      <p class="hint" id="sh_wmsg"></p>
+    </div>
+  </div>
+  <p class="hint">Every viewer must be allowed by the person sharing. Watching is view only unless the shared computer runs the T2BOX Windows app and its owner allows control. The picture goes straight from one device to the other. A free public relay (ntfy.sh) is only used to connect them.</p>
+</div>
+
+<div id="sh_host" hidden>
+  <div class="tfbar"><span class="tfdot" id="sh_hdot"></span><b id="sh_hstate">Sharing your screen</b><button class="btn ghost" id="sh_stop" type="button">Stop sharing</button></div>
+  <div class="tfbar" id="sh_ctlbar" hidden><span class="tfdot wait"></span><b>Someone is controlling this computer</b><button class="btn ghost" id="sh_ctlstop" type="button">Stop control</button></div>
+  <div id="sh_pend"></div>
+  <div class="box">
+    <h2>Tell the viewer this code</h2>
+    <div class="tfcode" id="sh_code">------</div>
+    <div class="tfqr"><canvas id="sh_qr" width="10" height="10"></canvas></div>
+    <div class="xrow"><button class="btn ghost" id="sh_copylink" type="button">Copy link</button></div>
+    <p class="hint" id="sh_hwait"></p>
+  </div>
+  <div id="sh_hchat"></div>
+</div>
+
+<div id="sh_view" hidden>
+  <div class="tfbar"><span class="tfdot" id="sh_vdot"></span><b id="sh_vstate">Connecting…</b><button class="btn ghost" id="sh_leave" type="button">Disconnect</button></div>
+  <div class="shvid" id="sh_wrap"><video id="sh_v" autoplay playsinline muted></video></div>
+  <div class="xbar">
+    <button class="btn" id="sh_ctl" type="button" hidden>Control</button>
+    <button class="btn ghost" id="sh_keysb" type="button" hidden>Keys</button>
+    <button class="btn ghost" id="sh_full" type="button">Full screen</button>
+    <button class="btn ghost" id="sh_fit" type="button">Fill</button>
+    <button class="btn ghost" id="sh_snd" type="button">Sound off</button>
+    <button class="btn ghost" id="sh_shot" type="button">Save picture</button>
+  </div>
+  <p class="hint" id="sh_info"></p>
+  <div id="sh_keys" class="shkeys" hidden></div>
+  <div class="xrow" id="sh_txtrow" hidden style="margin-bottom:10px"><input type="text" id="sh_txt" placeholder="Type text to send to the other computer" style="margin:0;flex:1;min-width:160px"><button class="btn" id="sh_txtsend" type="button" style="margin:0">Send text</button></div>
+  <div id="sh_vchat"></div>
+</div>
+
+<div class="box" id="sh_chat" hidden>
+  <h2>Chat</h2>
+  <div class="chatlog" id="sh_log"></div>
+  <div class="xrow" style="margin-top:10px"><input type="text" id="sh_msgin" placeholder="Type a message" style="margin:0;flex:1;min-width:160px"><button class="btn" id="sh_send" type="button" style="margin:0">Send</button></div>
+</div>
+<div class="msg" id="sh_msg" aria-live="polite"></div>
+</section>
 <section class="panel" id="p-pdf" role="tabpanel" aria-labelledby="tab-pdf" hidden>
 <div id="p_home">
   <h2 class="pt">Every tool you need to work with PDFs</h2>
@@ -794,7 +880,7 @@ select{min-width:0;max-width:100%}
 
   <footer class="site">
     <svg class="logo" role="img" aria-label="T2BOX"><use href="#t2box-logo"/></svg>
-    <span>&copy; <span id="yr"></span> <span title="v2.4">T2BOX</span>. All rights reserved.</span>
+    <span>&copy; <span id="yr"></span> <span title="v2.8">T2BOX</span>. All rights reserved.</span>
   </footer>
 </div>
 
@@ -807,7 +893,8 @@ window.isImgFile=f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|bmp|avif|hei
 /* Tabs */
 (()=>{
 const jm=/^#transfer=([A-Za-z0-9]{6})$/.exec(location.hash);if(jm)window.__t2join=jm[1].toUpperCase();
-const names=['audio','image','size','photo','cardprint','transfer','pdf'];
+const jm2=/^#screen=([A-Za-z0-9]{6,8})$/.exec(location.hash);if(jm2)window.__t2joinScreen=jm2[1].toUpperCase();
+const names=['audio','image','size','photo','cardprint','transfer','screen','pdf'];
 const fromHash=()=>{const h=location.hash.slice(1).split('=')[0];return h.startsWith('pdf')?'pdf':(names.includes(h)?h:'audio')};
 const INFO={
   audio:['MP3 Converter','Convert audio files to MP3. Change the bitrate, sample rate and volume, or trim your audio before you save it.'],
@@ -815,6 +902,7 @@ const INFO={
   size:['Image Size, DPI and File Size','Crop and resize a photo to an exact size in cm, mm, inch or pixels, set the DPI, and reduce the file to the KB or MB limit you need.'],
   photo:['Passport Photo Print','Place passport, visa or ID photos on an A4 sheet, ready to print or save as PDF.'],
   cardprint:['PVC / PAN Card Print','Print the front and back of a PVC card, PAN card or ID card on A4 paper. Print one side or both sides.'],
+  screen:['Screen Share','Show your computer screen live on another device, such as your phone. The viewer can watch and chat, but cannot control your computer.'],
   transfer:['File Transfer','Send any file between your computer and your phone directly. Open this page on both devices and connect with a code.'],
   pdf:['PDF Tools','Edit, merge, split, rotate, unlock and convert PDF files for free, right in your browser.']
 };
@@ -2924,21 +3012,22 @@ const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:
 const rid=n=>{const a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,v=>ALPHA[v%ALPHA.length]).join('')};
 const say=(t,err)=>{const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
 const fmt=b=>b>=1048576?(b/1048576).toFixed(1)+' MB':b>=1024?Math.round(b/1024)+' KB':b+' B';
-const S={role:null,id:null,code:null,peer:null,sig:null,pc:null,dc:null,connected:false,timer:null,joinTimer:null,buf:{}};
+const S={role:null,id:null,code:null,epoch:0,peer:null,sn:null,sig:null,pc:null,dc:null,connected:false,rc:false,timer:null,joinTimer:null,giveUp:null,ping:null,watch:null,lastRx:0,lock:null,buf:{}};
+const topic=()=>'t2box-'+S.code+(S.epoch?'-'+S.epoch:'');
 
 /* ---- signalling through ntfy.sh ---- */
-function openSig(topic,onmsg){
-  const es=new EventSource(NTFY+topic+'/sse?since=2m');
+function openSig(tp,onmsg){
+  const es=new EventSource(NTFY+tp+'/sse?since=2m');
   const ready=new Promise(res=>{es.onopen=()=>res();setTimeout(res,2500)});
   es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='message'&&d.message)onmsg(d.message)}catch(_){}};
-  return{ready,send:m=>fetch(NTFY+topic,{method:'POST',body:m}).catch(()=>{}),close:()=>es.close()};
+  return{ready,send:m=>fetch(NTFY+tp,{method:'POST',body:m}).catch(()=>{}),close:()=>es.close()};
 }
 function sendBig(k,to,text){
   const CH=2800,n=Math.ceil(text.length/CH);
-  for(let i=0;i<n;i++)S.sig.send(JSON.stringify({k,from:S.id,to,i,n,d:text.slice(i*CH,(i+1)*CH)}));
+  for(let i=0;i<n;i++)S.sig.send(JSON.stringify({k,from:S.id,to,sn:S.sn,i,n,d:text.slice(i*CH,(i+1)*CH)}));
 }
 function gather(m){
-  const key=m.k+m.from,a=S.buf[key]=S.buf[key]||[];a[m.i]=m.d;
+  const key=m.k+m.from+m.sn,a=S.buf[key]=S.buf[key]||[];a[m.i]=m.d;
   let c=0;for(let i=0;i<m.n;i++)if(a[i]!==undefined)c++;
   if(c===m.n){delete S.buf[key];return a.join('')}return null;
 }
@@ -2947,12 +3036,12 @@ async function onSig(raw){
   if(!m||m.from===S.id)return;
   try{
     if(S.role==='host'){
-      if(m.k==='join'&&!S.pc){S.peer=m.from;await startHost()}
-      else if(m.k==='answer'&&m.to===S.id&&S.pc){const sdp=gather(m);if(sdp&&!S.pc.remoteDescription)await S.pc.setRemoteDescription({type:'answer',sdp})}
+      if(m.k==='join'&&!S.pc){S.peer=m.from;S.sn=m.sn;await startHost()}
+      else if(m.k==='answer'&&m.to===S.id&&m.sn===S.sn&&S.pc){const sdp=gather(m);if(sdp&&!S.pc.remoteDescription)await S.pc.setRemoteDescription({type:'answer',sdp})}
     }else if(S.role==='guest'){
-      if(m.k==='offer'&&m.to===S.id&&!S.pc){const sdp=gather(m);if(sdp)await startGuest(sdp,m.from)}
+      if(m.k==='offer'&&m.to===S.id&&m.sn===S.sn&&!S.pc){const sdp=gather(m);if(sdp)await startGuest(sdp,m.from)}
     }
-  }catch(e){fail('The devices could not connect.')}
+  }catch(e){roundFailed()}
 }
 
 /* ---- WebRTC ---- */
@@ -2963,10 +3052,20 @@ const iceDone=(pc,ms=4000)=>new Promise(res=>{
 });
 function newPC(){
   const pc=new RTCPeerConnection({iceServers:ICE});
-  pc.onconnectionstatechange=()=>{if(S.connected&&(pc.connectionState==='failed'||pc.connectionState==='closed'))lost()};
+  pc.onconnectionstatechange=()=>{if(pc===S.pc&&S.connected&&(pc.connectionState==='failed'||pc.connectionState==='closed'))lost()};
   return pc;
 }
-function armTimer(){clearTimeout(S.timer);S.timer=setTimeout(()=>{if(!S.connected)fail('Could not connect directly. Try putting both devices on the same Wi-Fi, then create a new code.')},(window.__tfTimeout||45000))}
+function armTimer(){clearTimeout(S.timer);S.timer=setTimeout(()=>{if(!S.connected)roundFailed()},(window.__tfTimeout||45000))}
+/* one connection attempt did not work */
+function roundFailed(){
+  clearTimeout(S.timer);
+  if(S.rc){ // while reconnecting: try again, keep waiting
+    try{S.pc&&S.pc.close()}catch(_){}S.pc=null;S.buf={};
+    if(S.role==='guest')startJoinLoop(40);
+    return;
+  }
+  fail(S.role==='guest'?'Could not connect directly. Try putting both devices on the same Wi-Fi, then create a new code.':'Could not connect directly. Try putting both devices on the same Wi-Fi, then create a new code.');
+}
 async function startHost(){
   S.pc=newPC();setupDC(S.pc.createDataChannel('t2box'));
   const off=await S.pc.createOffer();await S.pc.setLocalDescription(off);await iceDone(S.pc);
@@ -2979,25 +3078,64 @@ async function startGuest(sdp,host){
 }
 function setupDC(dc){
   S.dc=dc;dc.binaryType='arraybuffer';dc.bufferedAmountLowThreshold=262144;
-  dc.onopen=onConnected;dc.onclose=()=>{if(S.connected)lost()};dc.onmessage=onData;
+  dc.onopen=()=>{if(dc===S.dc)onConnected()};
+  dc.onclose=()=>{if(dc===S.dc&&S.connected)lost()};
+  dc.onmessage=e=>{if(dc===S.dc)onData(e)};
 }
-function resetSig(){clearTimeout(S.timer);clearInterval(S.joinTimer);if(S.sig){S.sig.close();S.sig=null}}
+function stopTimers(){clearTimeout(S.timer);clearInterval(S.joinTimer);clearTimeout(S.giveUp);clearInterval(S.ping);clearInterval(S.watch);S.ping=S.watch=null}
+function resetSig(){if(S.sig){S.sig.close();S.sig=null}}
+function release(){try{S.lock&&S.lock.release()}catch(_){}S.lock=null}
 function cleanup(){
-  resetSig();try{S.dc&&S.dc.close()}catch(_){}try{S.pc&&S.pc.close()}catch(_){}
-  S.pc=null;S.dc=null;S.role=null;S.connected=false;S.peer=null;S.buf={};queue.length=0;cur=null;
+  stopTimers();resetSig();release();
+  const dc=S.dc,pc=S.pc;S.dc=null;S.pc=null;
+  try{dc&&dc.close()}catch(_){}try{pc&&pc.close()}catch(_){}
+  S.role=null;S.connected=false;S.rc=false;S.peer=null;S.sn=null;S.buf={};S.epoch=0;queue.length=0;cur=null;sending=false;
 }
 function home(){
   $('live').hidden=true;$('start').hidden=false;$('codebox').hidden=true;$('create').hidden=false;$('jmsg').textContent='';$('list').innerHTML='';
 }
-function fail(msg){const wasJoin=S.role==='guest';cleanup();home();say(msg,1);if(wasJoin)$('jmsg').textContent=''}
-function lost(){
-  if(!S.connected)return;S.connected=false;const d=document.querySelector('#tf_live .tfdot');if(d)d.classList.add('off');
-  $('state').textContent='Disconnected';say('The other device disconnected. You can create a new code to connect again.',1);
+function fail(msg){cleanup();home();say(msg,1)}
+function dot(cls){const d=document.querySelector('#tf_live .tfdot');if(d){d.classList.remove('off','wait');if(cls)d.classList.add(cls)}}
+
+/* ---- staying connected ---- */
+async function keepAwake(){
+  try{if(navigator.wakeLock&&!S.lock){S.lock=await navigator.wakeLock.request('screen');S.lock.addEventListener&&S.lock.addEventListener('release',()=>{S.lock=null})}}catch(_){}
 }
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!S.role)return;
+  if(S.connected){S.lastRx=Date.now();if(!S.dc||S.dc.readyState!=='open')lost();else keepAwake()}
+});
 function onConnected(){
-  clearTimeout(S.timer);clearInterval(S.joinTimer);S.connected=true;if(S.sig){S.sig.close();S.sig=null}
-  $('start').hidden=true;$('live').hidden=false;document.querySelector('#tf_live .tfdot').classList.remove('off');
-  $('state').textContent='Connected to your other device';say('');
+  clearTimeout(S.timer);clearInterval(S.joinTimer);clearTimeout(S.giveUp);
+  S.connected=true;S.rc=false;S.lastRx=Date.now();resetSig();
+  $('start').hidden=true;$('live').hidden=false;dot('');$('state').textContent='Connected to your other device';
+  if(!S.rcMsgKeep)say('');S.rcMsgKeep=false;
+  clearInterval(S.ping);clearInterval(S.watch);
+  S.ping=setInterval(()=>{try{if(S.dc&&S.dc.readyState==='open')S.dc.send('{"t":"ping"}')}catch(_){}},4000);
+  S.watch=setInterval(()=>{if(!document.hidden&&S.connected&&Date.now()-S.lastRx>25000)lost()},5000);
+  keepAwake();
+  if(queue.length&&!sending)run();
+}
+/* the connection dropped by accident: reconnect on a fresh channel with the same code */
+function lost(){
+  if(!S.role||S.rc||!S.connected)return;
+  S.connected=false;S.rc=true;S.epoch++;clearInterval(S.ping);clearInterval(S.watch);
+  if(cur){cur.row.querySelector('.st').textContent=fmt(cur.size)+' · Interrupted';cur=null}
+  const dc=S.dc,pc=S.pc;S.dc=null;S.pc=null;S.buf={};try{dc&&dc.close()}catch(_){}try{pc&&pc.close()}catch(_){}
+  dot('wait');$('state').textContent='Reconnecting…';say('Connection lost. Reconnecting…');
+  resetSig();S.sig=openSig(topic(),onSig);
+  if(S.role==='guest')startJoinLoop(60);
+  clearTimeout(S.giveUp);
+  S.giveUp=setTimeout(()=>{if(!S.connected){resetSig();clearInterval(S.joinTimer);S.rc=false;dot('off');$('state').textContent='Disconnected';say('Could not reconnect. Tap Disconnect, then create a new code on one device.',1)}},180000);
+}
+function startJoinLoop(max){
+  clearInterval(S.joinTimer);S.sn=rid(6);
+  const hello=()=>S.sig&&S.sig.send(JSON.stringify({k:'join',from:S.id,sn:S.sn}));
+  S.sig.ready.then(hello);let tries=0;
+  S.joinTimer=setInterval(()=>{
+    if(++tries>(window.__tfTries||max)){clearInterval(S.joinTimer);if(!S.rc)fail('No device answered this code. Check the code and try again.');return}
+    hello();
+  },(window.__tfJoinMs||4000));
 }
 
 /* ---- creating and joining ---- */
@@ -3013,8 +3151,7 @@ const linkFor=code=>location.href.split('#')[0]+'#transfer='+code;
 $('create').onclick=()=>{
   cleanup();say('');S.role='host';S.id=rid(6);S.code=rid(6);
   $('code').textContent=S.code;$('codebox').hidden=false;$('create').hidden=true;$('wait').textContent='Waiting for the other device…';
-  drawQR(linkFor(S.code));
-  S.sig=openSig('t2box-'+S.code,onSig);
+  drawQR(linkFor(S.code));S.sig=openSig(topic(),onSig);
 };
 $('cancel').onclick=()=>{cleanup();home();say('')};
 $('copylink').onclick=async()=>{
@@ -3025,15 +3162,15 @@ function join(code){
   code=(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(code.length!==6){$('jmsg').textContent='Type the 6 letter code.';return}
   cleanup();say('');S.role='guest';S.id=rid(6);S.code=code;$('jmsg').textContent='Connecting…';
-  S.sig=openSig('t2box-'+code,onSig);
-  const hello=()=>S.sig&&S.sig.send(JSON.stringify({k:'join',from:S.id}));
-  S.sig.ready.then(hello);let tries=0;
-  S.joinTimer=setInterval(()=>{if(++tries>(window.__tfTries||10)){fail('No device answered this code. Check the code and try again.');return}hello()},(window.__tfJoinMs||4000));
+  S.sig=openSig(topic(),onSig);startJoinLoop(10);
 }
 $('join').onclick=()=>join($('in').value);
 $('in').addEventListener('keydown',e=>{if(e.key==='Enter')join($('in').value)});
 $('in').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')});
-$('off').onclick=()=>{cleanup();home();say('')};
+$('off').onclick=()=>{
+  try{if(S.dc&&S.dc.readyState==='open')S.dc.send('{"t":"bye"}')}catch(_){}
+  setTimeout(()=>{cleanup();home();say('')},120);
+};
 
 /* ---- list ---- */
 function row(dir,name,size){
@@ -3042,7 +3179,7 @@ function row(dir,name,size){
   r.querySelector('.nm').textContent=name;r.querySelector('.st').textContent=fmt(size)+(dir==='out'?' · Waiting':' · Receiving');
   $('list').prepend(r);return r;
 }
-function prog(r,f,label){r.querySelector('i').style.width=Math.round(f*100)+'%';r.querySelector('.st').textContent=label}
+function prog(r,f,label){r.querySelector('i').style.width=Math.round(f*100)+'%';r.querySelector('.st').textContent=label;r.querySelector('.st').classList.remove('err')}
 function textRow(dir,text){
   const r=document.createElement('div');r.className='row tfrow';
   r.innerHTML='<span class="dirb">'+(dir==='out'?'&uarr;':'&darr;')+'</span><span class="txt"></span>';
@@ -3054,17 +3191,19 @@ function textRow(dir,text){
 
 /* ---- sending ---- */
 const queue=[];let sending=false;
-const low=()=>new Promise(res=>{S.dc.onbufferedamountlow=()=>{S.dc.onbufferedamountlow=null;res()}});
+const low=()=>new Promise((res,rej)=>{const dc=S.dc;if(!dc)return rej(Error('Disconnected'));let done=false,t;const fin=()=>{if(done)return;done=true;clearTimeout(t);dc.onbufferedamountlow=null;res()};dc.onbufferedamountlow=fin;t=setTimeout(fin,1000)});
 async function sendFile(it){
   const f=it.f,dc=S.dc,id=rid(8);
+  if(!dc||dc.readyState!=='open')throw Error('Disconnected');
   dc.send(JSON.stringify({t:'meta',id,name:f.name,size:f.size,type:f.type}));
   let off=0;
   while(off<f.size){
     const blk=await f.slice(off,off+262144).arrayBuffer();
     for(let p=0;p<blk.byteLength;p+=16384){
-      if(!S.dc||S.dc.readyState!=='open')throw Error('Disconnected');
+      if(S.dc!==dc||dc.readyState!=='open')throw Error('Disconnected');
       if(dc.bufferedAmount>1048576)await low();
-      dc.send(blk.slice(p,p+16384));
+      if(S.dc!==dc||dc.readyState!=='open')throw Error('Disconnected');
+      try{dc.send(blk.slice(p,p+16384))}catch(e){throw Error('Disconnected')}
     }
     off+=blk.byteLength;prog(it.row,off/f.size,fmt(f.size)+' · Sending '+Math.round(off/f.size*100)+'%');
   }
@@ -3072,7 +3211,14 @@ async function sendFile(it){
 }
 async function run(){
   sending=true;
-  while(queue.length){const it=queue.shift();try{await sendFile(it)}catch(e){it.row.querySelector('.st').textContent='Could not send';it.row.querySelector('.st').classList.add('err')}}
+  while(queue.length){
+    const it=queue.shift();
+    try{await sendFile(it)}
+    catch(e){
+      if(!S.connected||(e&&e.message==='Disconnected')){queue.unshift(it);prog(it.row,0,fmt(it.f.size)+' · Waiting to reconnect…');sending=false;return}
+      it.row.querySelector('.st').textContent='Could not send';it.row.querySelector('.st').classList.add('err');
+    }
+  }
   sending=false;
 }
 function addFiles(list){
@@ -3092,8 +3238,11 @@ $('sendtxt').onclick=()=>{
 /* ---- receiving ---- */
 let cur=null;
 function onData(ev){
+  S.lastRx=Date.now();
   if(typeof ev.data==='string'){
     let m;try{m=JSON.parse(ev.data)}catch(_){return}
+    if(m.t==='ping')return;
+    if(m.t==='bye'){cleanup();home();say('The other device disconnected.',1);return}
     if(m.t==='meta')cur={name:m.name||'file',size:m.size||0,type:m.type,parts:[],got:0,row:row('in',m.name||'file',m.size||0)};
     else if(m.t==='end'&&cur){
       const blob=new Blob(cur.parts,{type:cur.type||'application/octet-stream'}),a=document.createElement('a');
@@ -3108,6 +3257,384 @@ function onData(ev){
 
 /* ---- open from a link or QR code ---- */
 if(window.__t2join){$('in').value=window.__t2join;setTimeout(()=>join(window.__t2join),300)}
+})();
+</script>
+<script>
+/* Screen Share: live screen with WebRTC, and remote control through the T2BOX Windows app. ntfy.sh only connects the devices. */
+(()=>{
+const $=id=>document.getElementById('sh_'+id);
+const NATIVE=!!window.t2native;
+const NTFY='https://ntfy.sh/',ALPHA='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}];
+const rid=n=>{const a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,v=>ALPHA[v%ALPHA.length]).join('')};
+const say=(t,err)=>{const m=$('msg');m.textContent=t||'';m.classList.toggle('err',!!err)};
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const S={role:null,id:null,code:null,sig:null,stream:null,peers:new Map(),pending:new Map(),approved:new Set(),pc:null,sn:null,host:null,joinTimer:null,watch:null,lock:null,buf:{},rejoin:null,connected:false,dc:null,ending:false,waiting:false,
+  controller:null,sw:1920,sh:1080,keys:new Set(),btn:new Set(),capCtl:false,ctl:false};
+$('nat').hidden=!NATIVE;$('web').hidden=NATIVE;
+
+/* ---- keyboard table: KeyboardEvent.code -> [Windows virtual key, extended] ---- */
+const VK={Enter:[13,0],NumpadEnter:[13,1],Escape:[27,0],Backspace:[8,0],Tab:[9,0],Space:[32,0],Delete:[46,1],Insert:[45,1],Home:[36,1],End:[35,1],PageUp:[33,1],PageDown:[34,1],ArrowLeft:[37,1],ArrowUp:[38,1],ArrowRight:[39,1],ArrowDown:[40,1],
+  ShiftLeft:[160,0],ShiftRight:[161,0],ControlLeft:[162,0],ControlRight:[163,1],AltLeft:[164,0],AltRight:[165,1],MetaLeft:[91,1],MetaRight:[92,1],ContextMenu:[93,1],CapsLock:[20,0],NumLock:[144,1],ScrollLock:[145,0],PrintScreen:[44,1],Pause:[19,0],
+  Minus:[189,0],Equal:[187,0],BracketLeft:[219,0],BracketRight:[221,0],Backslash:[220,0],Semicolon:[186,0],Quote:[222,0],Comma:[188,0],Period:[190,0],Slash:[191,0],Backquote:[192,0],IntlBackslash:[226,0],
+  NumpadMultiply:[106,0],NumpadAdd:[107,0],NumpadSubtract:[109,0],NumpadDecimal:[110,0],NumpadDivide:[111,1]};
+for(let i=0;i<26;i++)VK['Key'+String.fromCharCode(65+i)]=[65+i,0];
+for(let i=0;i<10;i++){VK['Digit'+i]=[48+i,0];VK['Numpad'+i]=[96+i,0]}
+for(let i=1;i<=24;i++)VK['F'+i]=[111+i,0];
+
+/* ---- signalling ---- */
+function openSig(onmsg){
+  const es=new EventSource(NTFY+'t2box-sc-'+S.code+'/sse?since=1m');
+  const ready=new Promise(res=>{es.onopen=()=>res();setTimeout(res,2500)});
+  es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event==='message'&&d.message)onmsg(d.message)}catch(_){}};
+  return{ready,send:m=>fetch(NTFY+'t2box-sc-'+S.code,{method:'POST',body:m}).catch(()=>{}),close:()=>es.close()};
+}
+const sigSend=o=>S.sig&&S.sig.send(JSON.stringify(Object.assign({from:S.id},o)));
+function sendBig(k,to,sn,text){
+  const CH=2800,n=Math.ceil(text.length/CH);
+  for(let i=0;i<n;i++)sigSend({k,to,sn,i,n,d:text.slice(i*CH,(i+1)*CH)});
+}
+function gather(m){
+  const key=m.k+m.from+m.sn,a=S.buf[key]=S.buf[key]||[];a[m.i]=m.d;
+  let c=0;for(let i=0;i<m.n;i++)if(a[i]!==undefined)c++;
+  if(c===m.n){delete S.buf[key];return a.join('')}return null;
+}
+const iceDone=(pc,ms=4000)=>new Promise(res=>{
+  if(pc.iceGatheringState==='complete')return res();
+  const t=setTimeout(res,ms);pc.addEventListener('icegatheringstatechange',()=>{if(pc.iceGatheringState==='complete'){clearTimeout(t);res()}});
+});
+const newPC=()=>new RTCPeerConnection({iceServers:ICE});
+async function onSig(raw){
+  let m;try{m=JSON.parse(raw)}catch(_){return}
+  if(!m||m.from===S.id)return;
+  try{
+    if(S.role==='host'){
+      if(m.k==='join'){if(S.approved.has(m.from))await startPeer(m.from,m.sn);else addPending(m.from,m.sn)}
+      else if(m.k==='answer'&&m.to===S.id){const p=S.peers.get(m.from);if(p&&p.sn===m.sn&&!p.pc.remoteDescription){const sdp=gather(m);if(sdp)await p.pc.setRemoteDescription({type:'answer',sdp})}}
+    }else if(S.role==='viewer'){
+      if(m.to!==S.id||m.sn!==S.sn)return;
+      if(m.k==='offer'&&!S.pc){const sdp=gather(m);if(sdp)await answer(sdp,m.from)}
+      else if(m.k==='wait'){S.waiting=true;$('wmsg').textContent='Waiting for the host to allow you…'}
+      else if(m.k==='deny')endView('The host did not allow watching.')
+    }
+  }catch(e){}
+}
+
+/* ---- chat (shared box that moves between the two screens) ---- */
+function logMsg(who,text,me){
+  const d=document.createElement('div');d.className='cm'+(me?' me':'');const b=document.createElement('b');b.textContent=who;d.appendChild(b);d.appendChild(document.createTextNode(text));
+  $('log').appendChild(d);$('log').scrollTop=$('log').scrollHeight;
+}
+function showChat(where){$('chat').hidden=false;$(where).appendChild($('chat'))}
+const dcSend=(dc,o)=>{try{if(dc&&dc.readyState==='open'){dc.send(typeof o==='string'?o:JSON.stringify(o));return true}}catch(_){}return false};
+function sendChat(){
+  const t=$('msgin').value.trim();if(!t)return;$('msgin').value='';
+  const m=JSON.stringify({t:'chat',name:S.role==='host'?'Host':'Viewer',text:t});
+  if(S.role==='host')S.peers.forEach(p=>dcSend(p.dc,m));else dcSend(S.dc,m);
+  logMsg('You: ',t,true);
+}
+$('send').onclick=sendChat;$('msgin').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
+
+/* ---- wake lock and QR ---- */
+async function keepAwake(){try{if(navigator.wakeLock&&!S.lock){S.lock=await navigator.wakeLock.request('screen');S.lock.addEventListener&&S.lock.addEventListener('release',()=>{S.lock=null})}}catch(_){}}
+const release=()=>{try{S.lock&&S.lock.release()}catch(_){}S.lock=null};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.role)keepAwake()});
+function drawQR(text){
+  const c=$('qr');
+  if(!/^https?:$/.test(location.protocol)||/appassets/.test(location.host)||!window.T2QR){c.parentElement.hidden=true;return}
+  c.parentElement.hidden=false;
+  const m=window.T2QR(text),n=m.length,q=4,sc=Math.max(3,Math.floor(300/(n+2*q))),W=(n+2*q)*sc;
+  c.width=c.height=W;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,W);x.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(m[r][k])x.fillRect((k+q)*sc,(r+q)*sc,sc,sc);
+}
+const linkFor=code=>location.href.split('#')[0]+'#screen='+code;
+
+/* ================= HOST ================= */
+function countView(){let n=0;S.peers.forEach(p=>{if(p.up)n++});$('hstate').textContent=n?'Sharing your screen · '+n+(n>1?' people are':' person is')+' watching':'Sharing your screen';$('hwait').textContent=n?'':'Waiting for someone to watch…'}
+$('go').onclick=async()=>{
+  say('');
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){say('Screen sharing works on computers (Chrome, Edge or Firefox). Phones cannot share their screen from a browser, but they can watch.',1);return}
+  const quality=$('q').value;let stream;
+  try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:quality==='motion'?30:15},audio:$('aud').checked})}
+  catch(e){say(e&&e.name==='NotAllowedError'?'Sharing was cancelled.':'Could not start sharing on this device.',1);return}
+  cleanup();S.stream=stream;S.role='host';S.id=rid(6);S.code=rid(NATIVE?8:6);S.quality=quality;
+  const vt=stream.getVideoTracks()[0];if(vt){try{vt.contentHint=quality}catch(_){}vt.onended=()=>stopShare(true)}
+  $('start').hidden=true;$('host').hidden=false;$('code').textContent=S.code;$('hdot').className='tfdot';countView();drawQR(linkFor(S.code));showChat('hchat');
+  S.sig=openSig(onSig);keepAwake();
+};
+/* every viewer has to be allowed by the person sharing */
+function addPending(vid,sn){
+  const ex=S.pending.get(vid);if(ex&&ex.sn===sn)return;
+  S.pending.set(vid,{sn});sigSend({k:'wait',to:vid,sn});renderPending();
+  if(NATIVE&&window.t2native.attention)window.t2native.attention();
+}
+function renderPending(){
+  const box=$('pend');box.innerHTML='';
+  S.pending.forEach((v,vid)=>{
+    const r=document.createElement('div');r.className='pendrow';
+    r.innerHTML='<span><b>Someone wants to watch your screen.</b> Only allow people you know.</span>';
+    const ok=document.createElement('button'),no=document.createElement('button');
+    ok.className='btn';ok.type='button';ok.textContent='Allow';no.className='btn ghost';no.type='button';no.textContent='Deny';
+    ok.onclick=()=>{const q=S.pending.get(vid);S.pending.delete(vid);S.approved.add(vid);renderPending();if(q)startPeer(vid,q.sn)};
+    no.onclick=()=>{const q=S.pending.get(vid);S.pending.delete(vid);renderPending();if(q)sigSend({k:'deny',to:vid,sn:q.sn})};
+    r.appendChild(ok);r.appendChild(no);box.appendChild(r);
+  });
+}
+async function startPeer(vid,sn){
+  if(!S.stream)return;
+  const old=S.peers.get(vid);if(old){if(old.sn===sn)return;dropPeer(old,true)}
+  const p={id:vid,sn,pc:newPC(),dc:null,up:false,timer:null};S.peers.set(vid,p);
+  S.stream.getTracks().forEach(t=>p.pc.addTrack(t,S.stream));
+  const vs=p.pc.getSenders().find(x=>x.track&&x.track.kind==='video');
+  if(vs){try{const pr=vs.getParameters();pr.encodings=pr.encodings&&pr.encodings.length?pr.encodings:[{}];pr.encodings[0].maxBitrate=6e6;pr.degradationPreference=S.quality==='detail'?'maintain-resolution':'maintain-framerate';await vs.setParameters(pr)}catch(_){}}
+  p.dc=p.pc.createDataChannel('chat');p.dc.onmessage=e=>onHostDC(p,e);
+  p.dc.onopen=()=>{p.up=true;clearTimeout(p.timer);dcSend(p.dc,{t:'cap',ctl:NATIVE});countView()};
+  p.pc.onconnectionstatechange=()=>{const st=p.pc.connectionState;if((st==='failed'||st==='closed')&&S.peers.get(vid)===p)dropPeer(p)};
+  const off=await p.pc.createOffer();await p.pc.setLocalDescription(off);await iceDone(p.pc);
+  if(S.peers.get(vid)!==p)return;
+  sendBig('offer',vid,sn,p.pc.localDescription.sdp);
+  p.timer=setTimeout(()=>{if(!p.up&&S.peers.get(vid)===p)dropPeer(p)},(window.__shTimeout||45000));
+}
+function dropPeer(p,quiet){
+  clearTimeout(p.timer);if(S.peers.get(p.id)===p)S.peers.delete(p.id);
+  if(S.controller===p)revokeControl('The viewer left.');
+  try{p.dc&&p.dc.close()}catch(_){}try{p.pc.close()}catch(_){}if(!quiet)countView();
+}
+function stopShare(fromBrowser){
+  if(S.role!=='host')return;
+  S.peers.forEach(p=>dcSend(p.dc,{t:'bye'}));
+  revokeControl('');
+  setTimeout(()=>{cleanup();home();say(fromBrowser?'Sharing stopped.':'')},150);
+}
+$('stop').onclick=()=>stopShare(false);
+$('copylink').onclick=async()=>{
+  const t=/^https?:$/.test(location.protocol)&&!/appassets/.test(location.host)?linkFor(S.code):S.code;
+  try{await navigator.clipboard.writeText(t);$('hwait').textContent='Copied.'}catch(_){$('hwait').textContent=t}
+};
+function onHostDC(p,ev){
+  let m;try{m=JSON.parse(ev.data)}catch(_){return}
+  if(m.t==='chat'){logMsg((m.name||'Viewer')+': ',m.text||'');S.peers.forEach(q=>{if(q!==p)dcSend(q.dc,ev.data)})}
+  else if(m.t==='bye')dropPeer(p);
+  else if(m.t==='ctl-req')handleCtlReq(p);
+  else if(m.t==='ctl-end'){if(S.controller===p)revokeControl('The viewer stopped controlling.')}
+  else if(m.t==='in'&&S.controller===p)inject(m);
+}
+/* remote control (only in the T2BOX Windows app, and only after the owner allows it) */
+async function handleCtlReq(p){
+  if(!NATIVE){dcSend(p.dc,{t:'ctl-off',msg:'This computer is sharing from a web page, which cannot be controlled. Install the T2BOX Windows app on it.'});return}
+  if(S.controller){dcSend(p.dc,{t:'ctl-off',msg:'Someone else is already controlling this computer.'});return}
+  if(p.asking)return;p.asking=true;
+  try{
+    if(window.t2native.attention)window.t2native.attention();
+    const ok=await window.t2native.ask({title:'T2BOX Remote',message:'A viewer wants to control this computer. They will be able to use your mouse and keyboard. Allow?',yes:'Allow control',no:'No'});
+    if(!ok||!S.peers.has(p.id)||S.controller){dcSend(p.dc,{t:'ctl-off',msg:'The owner did not allow control.'});return}
+    const info=await window.t2native.screenInfo();S.sw=info.w||1920;S.sh=info.h||1080;
+    await window.t2native.ctlStart();S.controller=p;S.keys.clear();S.btn.clear();
+    dcSend(p.dc,{t:'ctl-on'});$('ctlbar').hidden=false;
+  }catch(e){dcSend(p.dc,{t:'ctl-off',msg:'Remote control could not start on this computer.'})}
+  finally{p.asking=false}
+}
+async function revokeControl(msg){
+  const p=S.controller;if(!p)return;S.controller=null;$('ctlbar').hidden=true;
+  const lines=[...S.keys].map(k=>'KU '+k).concat([...S.btn].map(b=>'U '+b));S.keys.clear();S.btn.clear();
+  try{if(lines.length)window.t2native.ctlSend(lines.join('\n')+'\n');await window.t2native.ctlStop()}catch(_){}
+  dcSend(p.dc,{t:'ctl-off',msg:msg||''});
+}
+$('ctlstop').onclick=()=>revokeControl('The owner stopped remote control.');
+if(NATIVE&&window.t2native.onRevoke)window.t2native.onRevoke(()=>revokeControl('The owner stopped remote control.'));
+const vkOf=c=>(typeof c==='string'&&Object.prototype.hasOwnProperty.call(VK,c))?VK[c]:null;
+const num=v=>Number.isFinite(+v)?+v:0;
+function inject(m){
+  if(!m||typeof m!=='object')return;
+  const out=[],px=()=>Math.round(clamp(num(m.x))*(S.sw-1))+' '+Math.round(clamp(num(m.y))*(S.sh-1));
+  switch(m.k){
+    case 'mm':out.push('M '+px());break;
+    case 'md':{const b=m.b|0;if(b<0||b>2)return;out.push('M '+px(),'D '+b);S.btn.add(b);break}
+    case 'mu':{const b=m.b|0;if(b<0||b>2)return;out.push('M '+px(),'U '+b);S.btn.delete(b);break}
+    case 'mw':out.push('W '+Math.round(clamp(-num(m.dy),-50,50)*120)+' '+Math.round(clamp(num(m.dx),-50,50)*120));break;
+    case 'kd':{const e=vkOf(m.c);if(!e)return;out.push('KD '+e[0]+' '+e[1]);S.keys.add(e[0]+' '+e[1]);break}
+    case 'ku':{const e=vkOf(m.c);if(!e)return;out.push('KU '+e[0]+' '+e[1]);S.keys.delete(e[0]+' '+e[1]);break}
+    case 'tx':{if(typeof m.s!=='string')return;const by=new TextEncoder().encode(m.s.slice(0,400));let bin='';by.forEach(b=>bin+=String.fromCharCode(b));out.push('T '+btoa(bin));break}
+    default:return;
+  }
+  window.t2native.ctlSend(out.join('\n')+'\n');
+}
+
+/* ================= VIEWER ================= */
+function watch(code){
+  code=(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length!==6&&code.length!==8){$('wmsg').textContent='Type the 6 or 8 letter code.';return}
+  cleanup();say('');S.role='viewer';S.id=rid(6);S.code=code;$('wmsg').textContent='Connecting…';
+  S.sig=openSig(onSig);startJoin(12);
+}
+function startJoin(max){
+  clearInterval(S.joinTimer);S.sn=rid(6);try{S.pc&&S.pc.close()}catch(_){}S.pc=null;S.buf={};S.waiting=false;
+  const hello=()=>sigSend({k:'join',sn:S.sn});
+  S.sig.ready.then(hello);let tries=0,waited=0;
+  S.joinTimer=setInterval(()=>{
+    if(S.connected&&S.pc){clearInterval(S.joinTimer);return}
+    if(S.waiting){if(++waited>45){clearInterval(S.joinTimer);endView('The host did not answer in time.')}return}
+    if(++tries>(window.__shTries||max)){clearInterval(S.joinTimer);endView(S.connected||S.rejoinMode?'The sharing seems to have ended.':'No device answered this code. Check the code and try again.');return}
+    hello();
+  },(window.__shJoinMs||4000));
+}
+async function answer(sdp,host){
+  clearInterval(S.joinTimer);S.host=host;const pc=S.pc=newPC();
+  pc.ontrack=e=>{const v=$('v');v.srcObject=e.streams[0]||new MediaStream([e.track]);v.play&&v.play().catch(()=>{});showView()};
+  pc.ondatachannel=e=>{S.dc=e.channel;e.channel.onmessage=onViewDC};
+  pc.onconnectionstatechange=()=>{
+    if(pc!==S.pc)return;const st=pc.connectionState;
+    if(st==='connected'){clearTimeout(S.rejoin);S.connected=true;S.rejoinMode=false;$('vstate').textContent='Watching';$('vdot').className='tfdot'}
+    else if(st==='disconnected'){$('vstate').textContent='Reconnecting…';$('vdot').className='tfdot wait';clearTimeout(S.rejoin);S.rejoin=setTimeout(()=>{if(pc===S.pc&&pc.connectionState!=='connected')reJoin()},8000)}
+    else if(st==='failed'||st==='closed'){reJoin()}
+  };
+  await pc.setRemoteDescription({type:'offer',sdp});const ans=await pc.createAnswer();await pc.setLocalDescription(ans);await iceDone(pc);
+  sendBig('answer',host,S.sn,pc.localDescription.sdp);
+  clearTimeout(S.rejoin);S.rejoin=setTimeout(()=>{if(pc===S.pc&&pc.connectionState!=='connected')reJoin()},(window.__shTimeout||45000));
+}
+function reJoin(){
+  if(S.role!=='viewer'||S.ending)return;
+  leaveControl('');S.rejoinMode=true;S.connected=false;clearTimeout(S.rejoin);$('vstate').textContent='Reconnecting…';$('vdot').className='tfdot wait';
+  startJoin(45);
+}
+function showView(){
+  $('start').hidden=true;$('view').hidden=false;$('host').hidden=true;$('wmsg').textContent='';showChat('vchat');keepAwake();
+  clearInterval(S.watch);S.watch=setInterval(()=>{const v=$('v');if(v.videoWidth&&!S.ctl)$('info').textContent='Picture: '+v.videoWidth+' × '+v.videoHeight+' px'},2000);
+}
+function endView(msg){cleanup();home();say(msg,1)}
+function onViewDC(ev){
+  let m;try{m=JSON.parse(ev.data)}catch(_){return}
+  if(m.t==='chat')logMsg((m.name||'Host')+': ',m.text||'');
+  else if(m.t==='bye')endView('The sharing has ended.');
+  else if(m.t==='cap'){S.capCtl=!!m.ctl;$('ctl').hidden=!S.capCtl;$('keysb').hidden=!S.capCtl;if(!S.capCtl)$('info').textContent='View only: this screen cannot be controlled.'}
+  else if(m.t==='ctl-on')enterControl();
+  else if(m.t==='ctl-off')leaveControl(m.msg||'Control ended.');
+}
+$('watch').onclick=()=>watch($('in').value);
+$('in').addEventListener('keydown',e=>{if(e.key==='Enter')watch($('in').value)});
+$('in').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')});
+$('leave').onclick=()=>{
+  S.ending=true;leaveControl('');dcSend(S.dc,{t:'bye'});
+  setTimeout(()=>{cleanup();home();say('')},120);
+};
+$('full').onclick=()=>{const w=$('wrap');(w.requestFullscreen||w.webkitRequestFullscreen||(()=>{const v=$('v');v.webkitEnterFullscreen&&v.webkitEnterFullscreen()})).call(w)};
+document.addEventListener('fullscreenchange',()=>{try{if(navigator.keyboard&&navigator.keyboard.lock){if(document.fullscreenElement&&S.ctl)navigator.keyboard.lock();else navigator.keyboard.unlock()}}catch(_){}});
+$('fit').onclick=()=>{const w=$('wrap');w.classList.toggle('fill');$('fit').textContent=w.classList.contains('fill')?'Fit':'Fill'};
+$('snd').onclick=()=>{const v=$('v');v.muted=!v.muted;$('snd').textContent=v.muted?'Sound off':'Sound on'};
+$('shot').onclick=()=>{
+  const v=$('v');if(!v.videoWidth){say('Nothing to save yet.',1);return}
+  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+  c.toBlob(b=>{if(b)window.T2I.save(b,'t2box-screen.png')},'image/png');
+};
+
+/* ---- controlling the other computer ---- */
+const sendIn=o=>dcSend(S.dc,Object.assign({t:'in'},o));
+$('ctl').onclick=()=>{
+  if(S.ctl){leaveControl('',true);return}
+  $('info').textContent='Asking the owner for permission…';dcSend(S.dc,{t:'ctl-req'});
+};
+const pressed=new Set(),mods={ControlLeft:false,AltLeft:false,ShiftLeft:false};
+function vpt(e){
+  const v=$('v'),r=v.getBoundingClientRect(),vw=v.videoWidth||1,vh=v.videoHeight||1,fill=$('wrap').classList.contains('fill');
+  const sc=fill?Math.max(r.width/vw,r.height/vh):Math.min(r.width/vw,r.height/vh),cw=vw*sc,ch=vh*sc,ox=r.left+(r.width-cw)/2,oy=r.top+(r.height-ch)/2;
+  return{x:clamp((e.clientX-ox)/cw),y:clamp((e.clientY-oy)/ch)};
+}
+let mmRaf=0,mmLast=null;
+function moveSend(p){mmLast=p;if(!mmRaf)mmRaf=requestAnimationFrame(()=>{mmRaf=0;if(mmLast)sendIn({k:'mm',x:mmLast.x,y:mmLast.y})})}
+let rightNext=false;const touches=new Map();let scrolling=false;
+const W=()=>$('wrap');
+function onPD(e){
+  if(!S.ctl)return;e.preventDefault();W().setPointerCapture&&W().setPointerCapture(e.pointerId);
+  if(e.pointerType==='touch'){
+    touches.set(e.pointerId,e.clientY);
+    if(touches.size===2){scrolling=true;if(pressed.has('b0')){sendIn({k:'mu',b:0,x:0,y:0});pressed.delete('b0')}return}
+    const p=vpt(e),b=rightNext?2:0;rightNext=false;$('keysb').dataset.r='';
+    sendIn({k:'md',b,x:p.x,y:p.y});pressed.add('b'+b);return;
+  }
+  const p=vpt(e);sendIn({k:'md',b:e.button,x:p.x,y:p.y});pressed.add('b'+e.button);
+}
+function onPM(e){
+  if(!S.ctl)return;
+  if(e.pointerType==='touch'){
+    if(scrolling){const prev=touches.get(e.pointerId);if(prev!==undefined){const dy=e.clientY-prev;if(Math.abs(dy)>2){sendIn({k:'mw',dx:0,dy:-dy/30});touches.set(e.pointerId,e.clientY)}}return}
+    if(!touches.has(e.pointerId))return;
+  }
+  moveSend(vpt(e));
+}
+function onPU(e){
+  if(!S.ctl)return;
+  if(e.pointerType==='touch'){
+    touches.delete(e.pointerId);if(scrolling){if(!touches.size)scrolling=false;return}
+    const p=vpt(e);for(const b of [0,2])if(pressed.has('b'+b)){sendIn({k:'mu',b,x:p.x,y:p.y});pressed.delete('b'+b)}return;
+  }
+  const p=vpt(e);sendIn({k:'mu',b:e.button,x:p.x,y:p.y});pressed.delete('b'+e.button);
+}
+function onWheel(e){
+  if(!S.ctl)return;e.preventDefault();
+  const f=e.deltaMode===1?1:e.deltaMode===2?10:1/100;sendIn({k:'mw',dx:e.deltaX*f,dy:e.deltaY*f});
+}
+function onKey(e){
+  if(!S.ctl)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;
+  if(!VK[e.code])return;e.preventDefault();e.stopPropagation();
+  if(e.type==='keydown'){sendIn({k:'kd',c:e.code});pressed.add('k'+e.code)}else{sendIn({k:'ku',c:e.code});pressed.delete('k'+e.code)}
+}
+function releaseAll(){
+  for(const k of [...pressed]){
+    if(k[0]==='k')sendIn({k:'ku',c:k.slice(1)});else sendIn({k:'mu',b:+k.slice(1),x:0,y:0});
+  }
+  pressed.clear();for(const c of Object.keys(mods)){if(mods[c]){sendIn({k:'ku',c});mods[c]=false}}
+  document.querySelectorAll('#sh_keys button.on').forEach(b=>b.classList.remove('on'));
+}
+function enterControl(){
+  S.ctl=true;$('ctl').textContent='Stop control';$('wrap').classList.add('ctl');$('wrap').tabIndex=0;$('wrap').focus();
+  $('info').textContent='You are controlling the other computer. Click Stop control when you are done.';$('txtrow').hidden=false;
+  const w=W();w.addEventListener('pointerdown',onPD);w.addEventListener('pointermove',onPM);w.addEventListener('pointerup',onPU);w.addEventListener('pointercancel',onPU);
+  w.addEventListener('wheel',onWheel,{passive:false});w.addEventListener('contextmenu',pc);
+  document.addEventListener('keydown',onKey,true);document.addEventListener('keyup',onKey,true);window.addEventListener('blur',releaseAll);
+  if(document.fullscreenElement){try{navigator.keyboard&&navigator.keyboard.lock&&navigator.keyboard.lock()}catch(_){}}
+}
+const pc=e=>{if(S.ctl)e.preventDefault()};
+function leaveControl(msg,tell){
+  if(!S.ctl&&!tell){if(msg)$('info').textContent=msg;return}
+  if(S.ctl){releaseAll();S.ctl=false}
+  if(tell)dcSend(S.dc,{t:'ctl-end'});
+  const w=W();w.classList.remove('ctl');w.removeEventListener('pointerdown',onPD);w.removeEventListener('pointermove',onPM);w.removeEventListener('pointerup',onPU);w.removeEventListener('pointercancel',onPU);w.removeEventListener('wheel',onWheel);w.removeEventListener('contextmenu',pc);
+  document.removeEventListener('keydown',onKey,true);document.removeEventListener('keyup',onKey,true);window.removeEventListener('blur',releaseAll);
+  try{navigator.keyboard&&navigator.keyboard.unlock&&navigator.keyboard.unlock()}catch(_){}
+  $('ctl').textContent='Control';$('txtrow').hidden=true;touches.clear();scrolling=false;
+  if(msg)$('info').textContent=msg;
+}
+/* on-screen keys for phones and tablets */
+(()=>{
+  const box=$('keys'),rows=[['Esc','Escape'],['Tab','Tab'],['Enter','Enter'],['Bksp','Backspace'],['Del','Delete'],['Home','Home'],['End','End'],['PgUp','PageUp'],['PgDn','PageDown'],['←','ArrowLeft'],['↑','ArrowUp'],['↓','ArrowDown'],['→','ArrowRight']];
+  for(let i=1;i<=12;i++)rows.push(['F'+i,'F'+i]);
+  const mk=(label,fn,cls)=>{const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;b.onclick=fn;box.appendChild(b);return b};
+  for(const [name,code] of [['Ctrl','ControlLeft'],['Alt','AltLeft'],['Shift','ShiftLeft']]){
+    const b=mk(name,()=>{if(!S.ctl)return;if(mods[code]){mods[code]=false;sendIn({k:'ku',c:code});b.classList.remove('on')}else{mods[code]=true;sendIn({k:'kd',c:code});b.classList.add('on')}});
+  }
+  mk('Right click',()=>{rightNext=true});
+  for(const [label,code] of rows)mk(label,()=>{if(!S.ctl)return;sendIn({k:'kd',c:code});sendIn({k:'ku',c:code});for(const c of Object.keys(mods))if(mods[c]){sendIn({k:'ku',c});mods[c]=false}document.querySelectorAll('#sh_keys button.on').forEach(x=>x.classList.remove('on'))});
+})();
+$('keysb').onclick=()=>{$('keys').hidden=!$('keys').hidden};
+$('txtsend').onclick=()=>{const t=$('txt').value;if(!t||!S.ctl)return;sendIn({k:'tx',s:t});$('txt').value=''};
+$('txt').addEventListener('keydown',e=>{if(e.key==='Enter')$('txtsend').click()});
+
+/* ---- reset ---- */
+function cleanup(){
+  leaveControl('');revokeControl('');
+  clearInterval(S.joinTimer);clearTimeout(S.rejoin);clearInterval(S.watch);release();
+  S.peers.forEach(p=>dropPeer(p,true));S.peers.clear();S.pending.clear();S.approved.clear();renderPending();
+  try{S.pc&&S.pc.close()}catch(_){}S.pc=null;S.dc=null;
+  if(S.sig){S.sig.close();S.sig=null}
+  if(S.stream){S.stream.getTracks().forEach(t=>{t.onended=null;try{t.stop()}catch(_){}});S.stream=null}
+  const v=$('v');v.srcObject=null;
+  S.role=null;S.connected=false;S.rejoinMode=false;S.ending=false;S.buf={};S.waiting=false;S.capCtl=false;
+}
+function home(){
+  $('start').hidden=false;$('host').hidden=true;$('view').hidden=true;$('chat').hidden=true;$('log').innerHTML='';$('wmsg').textContent='';$('wrap').classList.remove('fill');$('fit').textContent='Fill';
+  $('ctl').hidden=true;$('keysb').hidden=true;$('keys').hidden=true;$('txtrow').hidden=true;$('ctlbar').hidden=true;$('info').textContent='';
+}
+if(window.__t2joinScreen){$('in').value=window.__t2joinScreen;setTimeout(()=>watch(window.__t2joinScreen),300)}
 })();
 </script>
 <script>
